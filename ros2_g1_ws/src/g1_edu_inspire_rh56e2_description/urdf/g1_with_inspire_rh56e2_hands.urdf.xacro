@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Unitree G1 EDU-U6 (29 DOF, mode_machine 15) with Inspire RH56E2 hands at both wrists.
+
+     The hand's 30 mm flange (left/right_base_link.STL) sits on the end face of
+     *_wrist_yaw_link with a 1 mm gap, as measured on the real robot
+     (G1 images/g1_arm_hand_coupling_dimensions.jpeg: gap 1, flange 30, ring 9 mm):
+       end face of the 5010 wrist yaw link: x = 0.041 (Unitree's mesh)
+       gap:                                       + 0.001
+       top face of the flange, *_base origin: x = 0.042
+     The 9 mm silver ring after the flange is the top of the palm mesh (palm_1),
+     which the vendor's model puts 1 mm below the flange.
+
+     Orientation, as on the real robot and as in Unitree's own G1 + Inspire URDFs:
+     fingers along +x of *_wrist_yaw_link, thumb towards +z (the wrist yaw axis),
+     palm facing the body (-y on the left hand, +y on the right). With the arms
+     hanging, palms face inwards and thumbs forwards. -->
+<robot name="g1_edu_inspire_rh56e2" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- Position of the flange's top face on *_wrist_yaw_link (see above) -->
+  <xacro:property name="wrist_end_face_x" value="0.041"/>
+  <xacro:property name="wrist_flange_gap" value="0.001"/>
+  <xacro:property name="hand_mount_x" value="${wrist_end_face_x + wrist_flange_gap}"/>
+
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/g1_29dof_body.urdf.xacro"/>
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/inspire_rh56e2_hand_left.urdf.xacro"/>
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/inspire_rh56e2_hand_right.urdf.xacro"/>
+
+  <!-- Left hand: joint left_hand_connection_joint, left_wrist_yaw_link -> left_base -->
+  <xacro:inspire_hand_e2_left prefix="left_" parent="left_wrist_yaw_link">
+    <origin xyz="${hand_mount_x} 0 0" rpy="${-pi/2} 0 ${-pi/2}"/>
+  </xacro:inspire_hand_e2_left>
+
+  <!-- Right hand: joint right_hand_connection_joint, right_wrist_yaw_link -> right_base -->
+  <xacro:inspire_hand_e2_right prefix="right_" parent="right_wrist_yaw_link">
+    <origin xyz="${hand_mount_x} 0 0" rpy="${pi/2} 0 ${pi/2}"/>
+  </xacro:inspire_hand_e2_right>
+
+</robot>
