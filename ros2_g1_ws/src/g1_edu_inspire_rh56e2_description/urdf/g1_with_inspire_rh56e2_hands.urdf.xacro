@@ -13,17 +13,28 @@
      Orientation, as on the real robot and as in Unitree's own G1 + Inspire URDFs:
      fingers along +x of *_wrist_yaw_link, thumb towards +z (the wrist yaw axis),
      palm facing the body (-y on the left hand, +y on the right). With the arms
-     hanging, palms face inwards and thumbs forwards. -->
+     hanging, palms face inwards and thumbs forwards.
+
+     Each hand goes on its own wrist coupler (20.4 g on the scale), a link of its own
+     here: hand 868.1 g + coupler 20.4 g = 888.5 g, the scale reading of the hand with
+     its coupler. See "Mass" in the README. -->
 <robot name="g1_edu_inspire_rh56e2" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- Position of the flange's top face on *_wrist_yaw_link (see above) -->
-  <xacro:property name="wrist_end_face_x" value="0.041"/>
-  <xacro:property name="wrist_flange_gap" value="0.001"/>
-  <xacro:property name="hand_mount_x" value="${wrist_end_face_x + wrist_flange_gap}"/>
-
   <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/g1_29dof_body.urdf.xacro"/>
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/wrist_hand_coupler.urdf.xacro"/>
   <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/inspire_rh56e2_hand_left.urdf.xacro"/>
   <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/inspire_rh56e2_hand_right.urdf.xacro"/>
+
+  <!-- Position of the flange's top face on *_wrist_yaw_link (see above);
+       g1_wrist_end_face_x = 0.041 comes from wrist_hand_coupler.urdf.xacro -->
+  <xacro:property name="wrist_flange_gap" value="0.001"/>
+  <xacro:property name="hand_mount_x" value="${g1_wrist_end_face_x + wrist_flange_gap}"/>
+  <xacro:property name="inspire_coupler_mass" value="0.0204"/>
+
+  <xacro:wrist_hand_coupler name="left_inspire_coupler" parent="left_wrist_yaw_link"
+                            mass="${inspire_coupler_mass}"/>
+  <xacro:wrist_hand_coupler name="right_inspire_coupler" parent="right_wrist_yaw_link"
+                            mass="${inspire_coupler_mass}"/>
 
   <!-- Left hand: joint left_hand_connection_joint, left_wrist_yaw_link -> left_base -->
   <xacro:inspire_hand_e2_left prefix="left_" parent="left_wrist_yaw_link">

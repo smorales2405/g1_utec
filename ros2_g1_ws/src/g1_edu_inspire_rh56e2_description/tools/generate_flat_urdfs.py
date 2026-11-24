@@ -5,6 +5,7 @@
 
 Writes
     urdf/g1_29dof_with_RH56E2_hands.urdf  <- urdf/g1_with_inspire_rh56e2_hands.urdf.xacro
+    urdf/g1_29dof_with_fake_hands.urdf    <- urdf/g1_with_fake_hands.urdf.xacro
     urdf/g1_29dof_handless.urdf           <- urdf/g1_29dof_body.urdf.xacro
 with the robot renamed after the file and a header comment. Needs `xacro` on the
 PATH and the package findable by $(find ...) (source the workspace's install/setup.bash).
@@ -20,7 +21,11 @@ FLAT = [
     ('g1_with_inspire_rh56e2_hands.urdf.xacro', 'g1_29dof_with_RH56E2_hands',
      'Unitree G1 EDU-U6 (29 DOF, mode_machine 15) with Inspire RH56E2 hands, flattened.\n'
      '     Hands coupled by <mimic> (12 mimic joints, 41 independent revolute joints).\n'
-     '     Mass 37.950 kg: body 36.390 + left hand 0.784 + right hand 0.777.'),
+     '     Mass 38.167 kg: body 36.390 + 2 x (hand 0.8681 + wrist coupler 0.0204).'),
+    ('g1_with_fake_hands.urdf.xacro', 'g1_29dof_with_fake_hands',
+     'Unitree G1 EDU-U6 (29 DOF, mode_machine 15) with its fake hands (Unitree rubber\n'
+     '     hands), flattened. 29 revolute joints.\n'
+     '     Mass 36.850 kg: body 36.390 + 2 x (rubber hand 0.2096 + wrist coupler 0.0204).'),
     ('g1_29dof_body.urdf.xacro', 'g1_29dof_handless',
      'Unitree G1 EDU-U6 (29 DOF, mode_machine 15) body without hands, flattened.\n'
      '     29 revolute joints, mass 36.390 kg.'),

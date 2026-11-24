@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Wrist-hand coupler of the G1: xacro macro `wrist_hand_coupler`.
+
+     Every hand goes on the robot with its own coupler, an aluminium part that goes
+     into the rectangular socket at the end of *_wrist_yaw_link and takes the hand on a
+     ring that sticks out of it (G1 images/g1_wrist_coupler_*.jpeg,
+     wrist_hand_coupler_*.jpeg). Mounted, the hand hides it, so the link has no
+     geometry: only its mass, on the scale, and an estimate of its inertia.
+
+     Centre of mass on the wrist axis at the end face of the wrist: about half the part
+     is inside the socket and half in the ring. Inertia: a hollow aluminium cylinder
+     along x, outer diameter 38 mm (the ring), inner 32 mm, 20 mm long.
+
+     Usage:
+       <xacro:wrist_hand_coupler name="left_inspire_coupler" parent="left_wrist_yaw_link"
+                                 mass="0.0204"/>                                      -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- End face of the 5010 wrist yaw link (Unitree's mesh), along its x axis -->
+  <xacro:property name="g1_wrist_end_face_x" value="0.041"/>
+
+  <xacro:macro name="wrist_hand_coupler" params="name parent mass">
+    <xacro:property name="r_out" value="0.019"/>
+    <xacro:property name="r_in" value="0.016"/>
+    <xacro:property name="length" value="0.020"/>
+    <joint name="${name}_joint" type="fixed">
+      <origin xyz="${g1_wrist_end_face_x} 0 0" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="${name}"/>
+    </joint>
+    <link name="${name}">
+      <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <mass value="${mass}"/>
+        <inertia ixx="${mass * (r_out**2 + r_in**2) / 2}" ixy="0" ixz="0"
+                 iyy="${mass * (3 * (r_out**2 + r_in**2) + length**2) / 12}" iyz="0"
+                 izz="${mass * (3 * (r_out**2 + r_in**2) + length**2) / 12}"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+
+</robot>

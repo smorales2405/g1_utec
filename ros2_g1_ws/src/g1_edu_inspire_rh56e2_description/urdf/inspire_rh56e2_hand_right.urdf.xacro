@@ -10,8 +10,15 @@
          file, and both hands had a base_link.STL)
        - colours as on the real hand, with named materials instead of name="":
          flange (hand_base_link) silver, back cover (palm_2) white, everything else black
-     Same STL for visual and collision, joints, limits, <mimic> tags and inertials as the
-     vendor's.
+       - inertials of palm_1 and the 12 digit links, written by
+         tools/compute_hand_inertials.py (do not edit them by hand): the hand weighs
+         868.1 g, the 888.5 g of the real hand with its wrist coupler on the scale minus
+         the coupler's 20.4 g (the coupler is a link of the robot xacro). Digits keep the
+         vendor's masses, palm_1 takes the rest (475.26 g); centres of mass and tensors
+         are those of each link's mesh, as the vendor's put every left-hand digit's CoM
+         outside the digit. See "Inspire RH56E2 inertials" in the README.
+     Same STL for visual and collision, joints, limits and <mimic> tags as the vendor's;
+     inertials of hand_base_link, palm_2 and the force-sensor links also the vendor's.
 
      Usage:
        <xacro:inspire_hand_e2_right prefix="right_" parent="some_link">
@@ -77,9 +84,9 @@
     <!-- palm_1 -->
     <link name="${prefix}palm_1">
       <inertial>
-        <origin xyz="-0.00625 0.0022299999999999998 0.0689" rpy="0 0 0"/>
-        <mass value="0.38382"/>
-        <inertia ixx="0.00054913744" ixy="-4.42438e-06" ixz="2.9859009999999997e-05" iyy="0.00040036048" iyz="9.570770000000001e-06" izz="0.00022521596"/>
+        <origin xyz="-0.0020714 -0.0000896 0.0580537" rpy="0 0 0"/>
+        <mass value="0.475256"/>
+        <inertia ixx="7.199834e-04" ixy="5.518868e-06" ixz="4.761734e-05" iyy="5.541945e-04" iyz="-1.267341e-05" izz="3.248664e-04"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -167,9 +174,9 @@
     <!-- thumb_proximal -->
     <link name="${prefix}thumb_proximal">
       <inertial>
-        <origin xyz="0.00067 0.004940000000000001 -0.00671" rpy="0 0 0"/>
-        <mass value="0.01537"/>
-        <inertia ixx="9.7931e-07" ixy="-6.197e-08" ixz="-4.9e-09" iyy="6.735399999999999e-07" iyz="-3.6289999999999996e-08" izz="8.6359e-07"/>
+        <origin xyz="0.0017333 0.0098301 -0.0058388" rpy="0 0 0"/>
+        <mass value="0.015370"/>
+        <inertia ixx="5.963955e-07" ixy="-1.671741e-08" ixz="-2.859949e-09" iyy="5.045611e-07" iyz="-1.619956e-08" izz="5.177812e-07"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -199,9 +206,9 @@
     <!-- thumb_metacarpal -->
     <link name="${prefix}thumb_metacarpal">
       <inertial>
-        <origin xyz="-0.03301 0.013460000000000001 0.00542" rpy="0 0 0"/>
-        <mass value="0.11034000000000001"/>
-        <inertia ixx="1.996898e-05" ixy="1.123516e-05" ixz="-3.96656e-06" iyy="3.366305e-05" iyz="1.22531e-06" izz="4.2347589999999993e-05"/>
+        <origin xyz="-0.0300526 0.0120861 0.0058857" rpy="0 0 0"/>
+        <mass value="0.110340"/>
+        <inertia ixx="3.232479e-05" ixy="4.869589e-06" ixz="-3.479152e-06" iyy="3.992941e-05" iyz="8.688589e-07" izz="5.136326e-05"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -231,9 +238,9 @@
     <!-- thumb_intermediate -->
     <link name="${prefix}thumb_intermediate">
       <inertial>
-        <origin xyz="-0.01108 0.00155 0.011529999999999999" rpy="0 0 0"/>
-        <mass value="0.01779"/>
-        <inertia ixx="3.09353e-06" ixy="3.9120999999999997e-07" ixz="1.2929999999999999e-08" iyy="2.57591e-06" iyz="-7.61e-09" izz="3.32754e-06"/>
+        <origin xyz="-0.0125081 -0.0001768 0.0089679" rpy="0 0 0"/>
+        <mass value="0.017790"/>
+        <inertia ixx="3.346067e-06" ixy="1.307996e-07" ixz="3.975044e-08" iyy="2.709156e-06" iyz="1.744363e-08" izz="3.198905e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -294,9 +301,9 @@
     <!-- thumb_distal -->
     <link name="${prefix}thumb_distal">
       <inertial>
-        <origin xyz="-0.01264 0.007730000000000001 0.0105" rpy="0 0 0"/>
-        <mass value="0.00766"/>
-        <inertia ixx="1.15326e-06" ixy="1.6573e-07" ixz="-4.0000000000000004e-11" iyy="5.7535e-07" iyz="-7e-11" izz="1.15929e-06"/>
+        <origin xyz="-0.0145444 0.0079048 0.0075893" rpy="0 0 0"/>
+        <mass value="0.007660"/>
+        <inertia ixx="9.459419e-07" ixy="1.685925e-07" ixz="9.762665e-09" iyy="5.002186e-07" iyz="2.972847e-08" izz="8.922258e-07"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -417,9 +424,9 @@
     <!-- index_proximal -->
     <link name="${prefix}index_proximal">
       <inertial>
-        <origin xyz="0.00132 0.01078 0.00805" rpy="0 0 0"/>
-        <mass value="0.018690000000000002"/>
-        <inertia ixx="3.59962e-06" ixy="-4.1645999999999996e-07" ixz="-1.6599999999999999e-09" iyy="1.20603e-06" iyz="-6.3e-10" izz="3.79687e-06"/>
+        <origin xyz="0.0021993 0.0127440 0.0066515" rpy="0 0 0"/>
+        <mass value="0.018690"/>
+        <inertia ixx="3.117902e-06" ixy="-2.025636e-07" ixz="3.354656e-10" iyy="1.515271e-06" iyz="-2.066398e-10" izz="3.235549e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -449,9 +456,9 @@
     <!-- index_intermediate -->
     <link name="${prefix}index_intermediate">
       <inertial>
-        <origin xyz="-0.00016 0.0177 0.008" rpy="0 0 0"/>
-        <mass value="0.01102"/>
-        <inertia ixx="2.32185e-06" ixy="-5.6428e-07" ixz="9e-11" iyy="4.134e-07" iyz="3.9e-10" izz="2.4238400000000002e-06"/>
+        <origin xyz="-0.0005326 0.0253267 0.0060933" rpy="0 0 0"/>
+        <mass value="0.011020"/>
+        <inertia ixx="2.508237e-06" ixy="-4.493642e-07" ixz="-5.030267e-10" iyy="4.390647e-07" iyz="-3.263863e-09" izz="2.546092e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -572,9 +579,9 @@
     <!-- middle_proximal -->
     <link name="${prefix}middle_proximal">
       <inertial>
-        <origin xyz="0.0013700000000000001 0.011009999999999999 0.008060000000000001" rpy="0 0 0"/>
-        <mass value="0.01866"/>
-        <inertia ixx="3.59341e-06" ixy="-4.0058999999999996e-07" ixz="-1.64e-09" iyy="1.20028e-06" iyz="-1.21e-09" izz="3.7852399999999996e-06"/>
+        <origin xyz="0.0021993 0.0127440 0.0066515" rpy="0 0 0"/>
+        <mass value="0.018660"/>
+        <inertia ixx="3.112897e-06" ixy="-2.022384e-07" ixz="3.349271e-10" iyy="1.512839e-06" iyz="-2.063082e-10" izz="3.230355e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -604,9 +611,9 @@
     <!-- middle_intermediate -->
     <link name="${prefix}middle_intermediate">
       <inertial>
-        <origin xyz="0.0019 0.02314 0.00802" rpy="0 0 0"/>
-        <mass value="0.01767"/>
-        <inertia ixx="4.63728e-06" ixy="-1.35163e-06" ixz="2.92e-09" iyy="9.821e-07" iyz="1.151e-08" izz="5.00365e-06"/>
+        <origin xyz="0.0000930 0.0270238 0.0061006" rpy="0 0 0"/>
+        <mass value="0.017670"/>
+        <inertia ixx="4.542372e-06" ixy="-7.963572e-07" ixz="1.335054e-11" iyy="7.189357e-07" iyz="8.024201e-11" izz="4.617542e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -727,9 +734,9 @@
     <!-- ring_proximal -->
     <link name="${prefix}ring_proximal">
       <inertial>
-        <origin xyz="0.0011899999999999999 0.01036 0.00861" rpy="0 0 0"/>
-        <mass value="0.018690000000000002"/>
-        <inertia ixx="3.60961e-06" ixy="-3.8725e-07" ixz="-2.1949999999999998e-08" iyy="1.20307e-06" iyz="-1.3659e-07" izz="3.78952e-06"/>
+        <origin xyz="0.0021993 0.0127440 0.0066515" rpy="0 0 0"/>
+        <mass value="0.018690"/>
+        <inertia ixx="3.117902e-06" ixy="-2.025636e-07" ixz="3.354656e-10" iyy="1.515271e-06" iyz="-2.066398e-10" izz="3.235549e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -759,9 +766,9 @@
     <!-- ring_intermediate -->
     <link name="${prefix}ring_intermediate">
       <inertial>
-        <origin xyz="-0.00057 0.01725 0.00891" rpy="0 0 0"/>
-        <mass value="0.01102"/>
-        <inertia ixx="2.3471100000000002e-06" ixy="-5.196000000000001e-07" ixz="-2.702e-08" iyy="3.9493e-07" iyz="-1.0668000000000001e-07" izz="2.41823e-06"/>
+        <origin xyz="-0.0005326 0.0253267 0.0060933" rpy="0 0 0"/>
+        <mass value="0.011020"/>
+        <inertia ixx="2.508237e-06" ixy="-4.493642e-07" ixz="-5.030267e-10" iyy="4.390647e-07" iyz="-3.263863e-09" izz="2.546092e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -882,9 +889,9 @@
     <!-- pinky_proximal -->
     <link name="${prefix}pinky_proximal">
       <inertial>
-        <origin xyz="0.0008100000000000001 0.00991 0.00914" rpy="0 0 0"/>
-        <mass value="0.018690000000000002"/>
-        <inertia ixx="3.6346399999999997e-06" ixy="-3.0236e-07" ixz="-3.3420000000000004e-08" iyy="1.19929e-06" iyz="-2.7369e-07" izz="3.76746e-06"/>
+        <origin xyz="0.0021993 0.0127440 0.0066515" rpy="0 0 0"/>
+        <mass value="0.018690"/>
+        <inertia ixx="3.117902e-06" ixy="-2.025636e-07" ixz="3.354656e-10" iyy="1.515271e-06" iyz="-2.066398e-10" izz="3.235549e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>
@@ -914,9 +921,9 @@
     <!-- pinky_intermediate -->
     <link name="${prefix}pinky_intermediate">
       <inertial>
-        <origin xyz="-0.00094 0.01672 0.009800000000000001" rpy="0 0 0"/>
-        <mass value="0.01166"/>
-        <inertia ixx="2.29937e-06" ixy="-4.8052e-07" ixz="-5.047e-08" iyy="4.6335000000000003e-07" iyz="-1.984e-07" izz="2.33336e-06"/>
+        <origin xyz="-0.0014307 0.0206246 0.0060999" rpy="0 0 0"/>
+        <mass value="0.011660"/>
+        <inertia ixx="1.862131e-06" ixy="-3.607337e-07" ixz="5.938615e-11" iyy="4.314876e-07" iyz="1.044019e-10" izz="1.868092e-06"/>
       </inertial>
       <visual>
         <origin xyz="0 0 0" rpy="0 0 0"/>

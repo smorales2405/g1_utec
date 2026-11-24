@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Unitree G1 EDU-U6 (29 DOF, mode_machine 15) with its fake hands (Unitree's rubber
+     hands), each on its own wrist coupler: the robot as it ships, without the Inspire
+     RH56E2 hands.
+
+     Per wrist: coupler (20.4 g, estimated as the Inspire one) + rubber hand (209.6 g)
+     = 230 g, the scale reading of a fake hand with its coupler. The rubber touches the
+     end face of the wrist (gap 0). See "Fake hands" in the README. -->
+<robot name="g1_edu_fake_hands" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/g1_29dof_body.urdf.xacro"/>
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/wrist_hand_coupler.urdf.xacro"/>
+  <xacro:include filename="$(find g1_edu_inspire_rh56e2_description)/urdf/g1_fake_hand.urdf.xacro"/>
+
+  <xacro:property name="fake_hand_coupler_mass" value="0.0204"/>
+
+  <xacro:wrist_hand_coupler name="left_fake_hand_coupler" parent="left_wrist_yaw_link"
+                            mass="${fake_hand_coupler_mass}"/>
+  <xacro:wrist_hand_coupler name="right_fake_hand_coupler" parent="right_wrist_yaw_link"
+                            mass="${fake_hand_coupler_mass}"/>
+
+  <xacro:g1_fake_hand side="left" parent="left_wrist_yaw_link"/>
+  <xacro:g1_fake_hand side="right" parent="right_wrist_yaw_link"/>
+
+</robot>

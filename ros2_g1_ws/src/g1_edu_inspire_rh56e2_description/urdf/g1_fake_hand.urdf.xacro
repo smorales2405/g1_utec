@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- G1 fake hand (Unitree's rubber hand): xacro macro `g1_fake_hand`.
+
+     Source: unitreerobotics/unitree_ros, robots/g1_description/g1_29dof_mode_15.urdf,
+             links left/right_rubber_hand, meshes left/right_rubber_hand.STL
+             (commit 157ff950351e, BSD-3-Clause). Names as Unitree's.
+     Changes from upstream:
+       - mass 0.2096 kg instead of 0.170: the hand with its own coupler weighs 230 g on
+         the scale, and its coupler, not weighed alone, is taken as the Inspire hand's
+         20.4 g (a link of the robot xacro). Centre of mass as Unitree's; tensor scaled
+         by 0.2096 / 0.170 = 1.2329, which keeps Unitree's mass distribution.
+       - on the end face of the wrist yaw link, x = 0.041 (Unitree: 0.0415): mounted, the
+         rubber touches the wrist (G1 images/g1_wrist_with_fakehand_*.jpeg). y = +/-0.003
+         and orientation as Unitree's.
+       - black, as the real one (Unitree: white), and the mesh also as collision
+         (Unitree: none).
+     The mesh is the rubber hand only; the coupler is inside its wrist and in the
+     wrist's socket.
+
+     Usage:
+       <xacro:g1_fake_hand side="left" parent="left_wrist_yaw_link"/>   side: left | right -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:property name="fake_hand_mass" value="${0.230 - 0.0204}"/>
+  <xacro:property name="fake_hand_unitree_mass" value="0.170"/>
+
+  <xacro:macro name="g1_fake_hand" params="side parent">
+    <!-- +1 on the left hand, -1 on the right: Unitree's two hands are mirrors in y -->
+    <xacro:property name="s" value="${1 if side == 'left' else -1}"/>
+    <xacro:property name="k" value="${fake_hand_mass / fake_hand_unitree_mass}"/>
+    <joint name="${side}_hand_palm_joint" type="fixed">
+      <origin xyz="${g1_wrist_end_face_x} ${0.003 * s} 0" rpy="0 0 0"/>
+      <parent link="${parent}"/>
+      <child link="${side}_rubber_hand"/>
+    </joint>
+    <link name="${side}_rubber_hand">
+      <inertial>
+        <origin xyz="0.05361310808 ${-0.00295905240 * s} 0.00215413091" rpy="0 0 0"/>
+        <mass value="${fake_hand_mass}"/>
+        <inertia ixx="${0.00010099485234748 * k}" ixy="${0.00003618590790516 * s * k}"
+                 ixz="${-0.00000074301518642 * k}" iyy="${0.00028135871571621 * k}"
+                 iyz="${0.00000330189743286 * s * k}" izz="${0.00021894770413514 * k}"/>
+      </inertial>
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/${side}_rubber_hand.STL"/>
+        </geometry>
+        <material name="g1_fake_hand_black">
+          <color rgba="0.1 0.1 0.1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+          <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/${side}_rubber_hand.STL"/>
+        </geometry>
+      </collision>
+    </link>
+  </xacro:macro>
+
+</robot>
