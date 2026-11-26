@@ -5,7 +5,7 @@ dedos siguen a los del operador**, por `rt/arm_sdk`, mientras **la locomoción d
 persona lo maneja con el mando. Todo corre en el PC2 (Jetson). Copia versionada y detalle:
 `g1_utec/g1_teleoperation` (README.md y scripts_robot/README.md).
 
-**Preparado el 2026-11-26 y probado solo en simulación.**
+**Funciona desde el 2026-11-26**: brazos y dedos siguen al operador y el robot camina con el mando sin caerse.
 
 ## Cómo se lanza
 

@@ -8,9 +8,8 @@ Es la teleoperación del H1-2 (`h1_2_utec/h1_2_teleoperation`) pasada al G1. Tod
 (el Jetson): `~/utec/teleoperacion`, `xr_teleoperate` de Unitree en el commit `817fb00` y el entorno `env_tv`.
 Desde el PC solo se lanza, por SSH, con los scripts de [`scripts/`](scripts/).
 
-> **Estado (2026-11-26): instalado en el G1 y probado por partes; falta el teleop completo con las gafas.**
-> Hecho en el robot: la instalación, la cámara, las dos manos (y cuál es cuál) y arm_sdk sin seguir al operador
-> (§9). Falta el teleop con las Quest y el driver de las manos dentro de él.
+> **Estado (2026-11-26): funciona en el G1.** Teleop completo con las Quest: los brazos y los dedos siguen al
+> operador y **el robot camina con el mando mientras mueve los brazos, sin caerse**. Detalle y lo pendiente en §9.
 
 **Nada de esto se lanza sin el visto bueno del responsable del laboratorio.**
 
@@ -94,8 +93,8 @@ PC**: los scripts piden la contraseña de `unitree` cada vez, hasta que se haga 
 
 ## 4. Antes de cada sesión
 
-- **Las primeras veces, el robot colgado del arnés**: aunque la locomoción lo sostiene, con L2 + B o un fallo
-  cae. Cuando se haya probado todo (§9), en el suelo y con espacio.
+- **El robot con el arnés cerca**: aunque la locomoción lo sostiene, con L2 + B o un fallo cae. Ya ha caminado
+  teleoperado (§9), pero quedan cosas por comprobar.
 - Una persona con el **mando de Unitree** en la mano y nadie al alcance de los brazos.
 - El G1 **de pie en modo Regular (R1+Y en este G1; FSM 501)**, no en Running (R2+A) ni en Debug.
 - Comprobación de solo lectura:
@@ -208,23 +207,21 @@ equilibrio al mover los brazos caminando), las gafas, la cámara, las manos real
 | Modo | `CheckMode` `'ai'`; FSM **501** en Regular (R1+Y) |
 | arm_sdk (`prueba_arm_sdk.py`) | peso de 0 a 1 en 1,9 s, 5 s quieto y a 0 en 2,2 s, sin aborto. Las muñecas se desplazan ~1,5° mientras cambia el peso (la consigna pasa de la locomoción a la nuestra y vuelve) y, con el peso en 1, nada se mueve más de 0,3°: **la locomoción atiende `rt/arm_sdk`** |
 | Certificado y Vuer | certificado para `192.168.0.151` en `~/.config/xr_teleoperate`; `vuer_offline.sh` → `OFFLINE: si` |
+| **Teleop completo** (`./teleop_xr.sh`, ~6,5 min) | con las Quest 3: **brazos y dedos siguen al operador, y el G1 camina con el mando moviendo los brazos sin caerse**. En el log: `CheckMode` `'ai'`, FSM 501, entrada con `r` en 2 s y salida con `q` completa (brazos a 0° en 1,3 s, manos abiertas en 0,5 s, brazos a la postura de la locomoción en 1,0 s, peso a 0), sin errores. El driver lee las dos manos a 200 Hz |
 
 **Pendiente**, de menos a más:
 
 1. **`mode_machine`**: `rt/lowstate` dice **5** (en la tabla de Unitree, 29 DOF con muñecas 4010), y la app dijo 15
    (muñecas 5010). La IK usa el modelo del 15; entre los dos, la mano se desplaza 5 mm. Aclarar cuál es.
-2. El driver de las manos (`inspire_ftp_dual_driver.py`) dentro del teleop: **abre las manos al arrancar**.
-3. El teleop completo **sin pulsar `r`** y saliendo con `q` (con gafas, cámara y manos); después pulsando `r`,
-   de pie y quieto; después caminando despacio con el mando.
-4. **Qué hace la locomoción si `rt/arm_sdk` deja de llegar con el peso en 1** (por ejemplo `kill -9` del teleop):
+2. **Qué hace la locomoción si `rt/arm_sdk` deja de llegar con el peso en 1** (por ejemplo `kill -9` del teleop):
    si mantiene la última consigna o devuelve los brazos. De eso depende cuánto importa un fallo del PC2.
-5. **La cintura**: `G1_29_ArmController` manda también la cintura, fija en su ángulo inicial y con kp 300, como hace
-   Unitree en `--motion`. Ver si molesta al caminar.
-6. El ajuste de los dedos: el retargeting de Unitree usa el modelo de su Inspire (dedos de 0 a 1,7 rad, pulgar de
+3. **La cintura**: `G1_29_ArmController` manda también la cintura, fija en su ángulo inicial y con kp 300, como hace
+   Unitree en `--motion`. Con ella así el robot caminó sin caerse; falta ver si conviene dejársela a la locomoción.
+4. El ajuste de los dedos: el retargeting de Unitree usa el modelo de su Inspire (dedos de 0 a 1,7 rad, pulgar de
    0 a 0,5 y de −0,1 a 1,3) y la RH56E2 tiene otros rangos (0–1,438, 0–0,62 y 0–1,658 rad). Funciona igual, pero
    la correspondencia de los dedos no será exacta.
-7. Que `L2 + B` del mando es el amortiguamiento en este G1, como en el manual de Unitree.
-8. `rt/lowstate` llega a ~1000 msg/s (no 500): no afecta, pero no se sabe por qué.
+5. Que `L2 + B` del mando es el amortiguamiento en este G1, como en el manual de Unitree.
+6. `rt/lowstate` llega a ~1000 msg/s (no 500): no afecta, pero no se sabe por qué.
 
 ## 10. Qué hay en esta carpeta
 
