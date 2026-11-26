@@ -4,7 +4,8 @@ Driver headless de las DOS manos Inspire RH56E2 del G1 EDU-U6 (UTEC).
 
 Es el driver del H1-2 (manos RH56DFTP), copiado de
 h1_2_utec/h1_2_teleoperation/scripts_robot/home_unitree/inspire_ftp_dual_driver.py,
-con un solo cambio: las IP de las manos (LEFT_IP/RIGHT_IP). La RH56E2 habla el
+con dos cambios: las IP de las manos (LEFT_IP/RIGHT_IP) y el orden de los bytes de
+err/status/temperature en TCP (corregir_orden_bytes). La RH56E2 habla el
 mismo Modbus TCP (puerto 6000) y tiene los mismos registros que usa este driver:
 ANGLE_SET 1486, ANGLE_ACT 1546, FORCE_ACT 1582, STATUS 1612...
 
@@ -85,6 +86,27 @@ STATES_FULL = [
 ]
 
 
+def corregir_orden_bytes(handler):
+    """err, status y temperature con el dedo par en el byte BAJO de cada registro.
+
+    Son bloques de 6 valores de un byte en 3 registros, y `inspire_sdk.py` los separa poniendo primero el byte
+    ALTO: publicaba cada pareja de dedos cambiada (menique<->anular, medio<->indice, pulgar<->rotacion del pulgar).
+    En la RH56E2 del G1 el dedo par va en el byte bajo: comprobado el 2026-11-26 moviendo solo el indice
+    (g1_hands/pruebas/prueba_enlace.py indice), como lo leen manos.py y g1_hands. Es lo mismo que hace que los
+    valores de 16 bits salgan bien: la direccion de byte mas baja es el byte bajo del registro.
+    El teleop de Unitree solo usa angle_act, asi que esto no cambia el control: arregla lo que se ve del estado.
+    """
+    original = handler.read_and_parse_registers
+
+    def leer(start_address, num_registers, data_type="short"):
+        valores = original(start_address, num_registers, data_type)
+        if data_type == "byte" and valores is not None:
+            valores = [valores[i ^ 1] for i in range(len(valores))]
+        return valores
+
+    handler.read_and_parse_registers = leer
+
+
 def init_dds(network):
     """Inicializa CycloneDDS en el dominio 0, opcionalmente atado a una NIC.
 
@@ -111,6 +133,7 @@ def worker_tcp(name, ip, port, lr, device_id, network, states, want_touch, repor
         ip=ip, port=port, LR=lr, device_id=device_id,
         states_structure=states, initDDS=False,
     )
+    corregir_orden_bytes(handler)
     if not want_touch:
         # read() publica el tactil solo si use_serial es False; forzarlo a True
         # despues de construir salta ese bloque sin tocar el transporte, que ya

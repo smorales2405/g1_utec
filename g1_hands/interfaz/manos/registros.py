@@ -32,8 +32,8 @@ CLEAR_ERROR = 1004  # escribir 1 borra el fallo de los dedos
 
 # Dentro de cada registro, el byte del dedo par va en el byte BAJO, como en manos.py de g1_teleoperation. Comprobado
 # en el G1 el 2026-11-26 moviendo solo el indice (pruebas/prueba_enlace.py indice): el STATUS que seguia en
-# movimiento era el del indice. El SDK de Inspire (inspire_sdk.py) los toma AL REVES, asi que el err, status y
-# temperatura que publica el driver del teleop salen cambiados por parejas de dedos.
+# movimiento era el del indice. El SDK de Inspire (inspire_sdk.py) los toma AL REVES; el driver del teleop lo corrige
+# desde el 2026-11-26 (corregir_orden_bytes en inspire_ftp_dual_driver.py), antes los publicaba cambiados por parejas.
 BYTE_BAJO_PRIMERO = True
 
 # STATUS de cada dedo (manual de la RH56; 255 es lo que leen las RH56E2 del G1 en reposo). Al recibir un ANGLE_SET

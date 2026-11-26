@@ -114,8 +114,9 @@ Medido en el G1:
 - **Pinza:** el índice y el pulgar se tocan. La derecha aprieta con **766 gf** en el índice y la izquierda con 82 gf.
 - **La rotación del pulgar** queda ~15 por debajo de la consigna (1000 → 985, 500 → 485, 133 → 118).
 - **Orden de los bytes** de `STATUS`, `ERROR` y `TEMP`: el byte **bajo** es el del dedo par, como en `manos.py`.
-  Al mover solo el índice, el que seguía en movimiento era el índice. El SDK de Inspire los toma al revés, así que
-  lo que publica el driver del teleop en `err`, `status` y `temperature` sale cambiado por parejas de dedos.
+  Al mover solo el índice, el que seguía en movimiento era el índice. El SDK de Inspire los toma al revés, y el
+  driver del teleop publicaba `err`, `status` y `temperature` cambiados por parejas de dedos; desde el 2026-11-26 lo
+  corrige (`corregir_orden_bytes` en `g1_teleoperation/.../inspire_ftp_dual_driver.py`).
 - **`ANGLE_SET` no se puede leer**: con las manos abiertas devuelve `[0, 0, 0, 0, 0, 208]` (derecha) y
   `[0, 0, 0, 0, 0, 160]` (izquierda). La interfaz solo lo escribe. La columna «Consigna» es lo último que mandó la
   interfaz.

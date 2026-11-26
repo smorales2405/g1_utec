@@ -31,7 +31,7 @@ paso 2).
 | `…/instalar.sh`, `montar.sh` | `~/utec/teleoperacion/` | `instalar.sh` crea `env_tv` en el Jetson (§4, paso 4); `montar.sh` hace los pasos 3 y 4 seguidos (clon de `xr_teleoperate`, Miniforge e `instalar.sh`) |
 | `…/prueba_arm_sdk.py` | `~/utec/teleoperacion/` | primera prueba de `rt/arm_sdk` sin gafas: sube el peso, mantiene los brazos y lo baja (§6, paso 5) |
 | `…/enviar.py`, `prueba_gafas.py`, `vuer_offline.sh`, `README.md`, `certs/san.cnf` | `~/utec/teleoperacion/` | órdenes por IPC, prueba de las gafas sin DDS, la página de Vuer sin Internet, el README del robot y la plantilla del certificado |
-| `home_unitree/inspire_ftp_dual_driver.py` | `~/` | driver de las manos, Modbus TCP ⇄ DDS (`rt/inspire_hand/*`). El del H1-2 con las IP `192.168.123.210/.211` |
+| `home_unitree/inspire_ftp_dual_driver.py` | `~/` | driver de las manos, Modbus TCP ⇄ DDS (`rt/inspire_hand/*`). El del H1-2 con las IP `192.168.123.210/.211` y con `err`/`status`/`temperature` en el orden de bytes de la RH56E2 (el SDK de Inspire los cambiaba por parejas de dedos) |
 | `home_unitree/pc2_offline/src/unitree_sdk2_python` | `~/pc2_offline/src/` | `unitree_sdk2py` 1.0.1, el del H1-2. Tiene `LocoClient` y `MotionSwitcherClient` del G1 |
 | `home_unitree/pc2_offline/src/inspire_hand_sdk` | `~/pc2_offline/src/` | `inspire_sdkpy` 1.0.0 con el parche `uint16` del H1-2 |
 | `xr_teleoperate_cambios/teleop/teleimager/cam_config_server.yaml` | `~/utec/teleoperacion/xr_teleoperate/teleop/teleimager/` | cámara: solo la D435i de la cabeza, por ZMQ. Se copia **después** de clonar `xr_teleoperate`, y hay que poner su número de serie |
