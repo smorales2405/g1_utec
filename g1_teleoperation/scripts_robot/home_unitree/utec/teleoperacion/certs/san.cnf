@@ -1,0 +1,18 @@
+# Certificado HTTPS para las Quest 3 (televuer lo lee de ~/.config/xr_teleoperate/). IP.2 es la del G1 en la WiFi
+# (la de las gafas): scripts_robot/README.md, paso 7.
+[req]
+distinguished_name=dn
+x509_extensions=v3
+prompt=no
+[dn]
+CN=xr-teleoperate-g1
+[v3]
+subjectAltName=@alt
+basicConstraints=CA:FALSE
+keyUsage=digitalSignature,keyEncipherment
+extendedKeyUsage=serverAuth
+[alt]
+DNS.1=localhost
+IP.1=127.0.0.1
+IP.2=192.168.0.151
+IP.3=192.168.123.164

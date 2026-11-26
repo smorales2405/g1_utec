@@ -4,7 +4,12 @@ Modelo del **Unitree G1 EDU-U6** (29 DOF, `mode_machine` 15) con manos
 **Inspire RH56E2**, como el robot real del laboratorio, o con las **fake hands** de
 Unitree. Las masas de las manos y de sus acoples son las de la balanza.
 
+Y la **teleoperación XR con Meta Quest 3** de brazos y manos por `arm_sdk`, con el
+robot en su locomoción y caminando con el mando: [`g1_teleoperation/`](g1_teleoperation/README.md)
+(preparada y probada en simulación; sin probar en el robot).
+
 ```
+g1_teleoperation/                         teleoperación XR (Quest 3) con arm_sdk: PC, robot y simulación
 ros2_g1_ws/                               workspace ROS 2 (Humble)
 └── src/
     └── g1_edu_inspire_rh56e2_description/    URDF/xacro, meshes, launch y RViz del G1 con las manos

@@ -1,0 +1,2901 @@
+<?xml version="1.0" ?>
+<!-- Unitree G1 EDU-U6 (29 DOF, mode_machine 15) with Inspire RH56E2 hands, flattened.
+     Hands coupled by <mimic> (12 mimic joints, 41 independent revolute joints).
+     Mass 38.167 kg: body 36.390 + 2 x (hand 0.8681 + wrist coupler 0.0204).
+     GENERATED from urdf/g1_with_inspire_rh56e2_hands.urdf.xacro by tools/generate_flat_urdfs.py: do not edit,
+     edit the xacro and regenerate. Meshes are package:// URIs of
+     g1_edu_inspire_rh56e2_description. -->
+<!-- Unitree G1 EDU-U6 (29 DOF, mode_machine 15) with Inspire RH56E2 hands at both wrists.
+
+     The hand's 30 mm flange (left/right_base_link.STL) sits on the end face of
+     *_wrist_yaw_link with a 1 mm gap, as measured on the real robot
+     (G1 images/g1_arm_hand_coupling_dimensions.jpeg: gap 1, flange 30, ring 9 mm):
+       end face of the 5010 wrist yaw link: x = 0.041 (Unitree's mesh)
+       gap:                                       + 0.001
+       top face of the flange, *_base origin: x = 0.042
+     The 9 mm silver ring after the flange is the top of the palm mesh (palm_1),
+     which the vendor's model puts 1 mm below the flange.
+
+     Orientation, as on the real robot and as in Unitree's own G1 + Inspire URDFs:
+     fingers along +x of *_wrist_yaw_link, thumb towards +z (the wrist yaw axis),
+     palm facing the body (-y on the left hand, +y on the right). With the arms
+     hanging, palms face inwards and thumbs forwards.
+
+     Each hand goes on its own wrist coupler (20.4 g on the scale), a link of its own
+     here: hand 868.1 g + coupler 20.4 g = 888.5 g, the scale reading of the hand with
+     its coupler. See "Mass" in the README. -->
+<robot name="g1_29dof_with_RH56E2_hands">
+  <material name="g1_dark">
+    <color rgba="0.2 0.2 0.2 1"/>
+  </material>
+  <material name="g1_white">
+    <color rgba="0.7 0.7 0.7 1"/>
+  </material>
+  <!-- [CAUTION] uncomment when convert to mujoco -->
+  <!-- <link name="world"></link>
+  <joint name="floating_base_joint" type="floating">
+    <parent link="world"/>
+    <child link="pelvis"/>
+  </joint> -->
+  <link name="pelvis">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 -0.07605"/>
+      <mass value="3.813"/>
+      <inertia ixx="0.010549" ixy="0" ixz="2.1E-06" iyy="0.0093089" iyz="0" izz="0.0079184"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/pelvis_ver0529.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+  </link>
+  <!-- Legs -->
+  <link name="left_hip_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.002741 0.047791 -0.02606"/>
+      <mass value="1.35"/>
+      <inertia ixx="0.001811" ixy="3.68E-05" ixz="-3.44E-05" iyy="0.0014193" iyz="0.000171" izz="0.0012812"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_hip_pitch_link.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_hip_pitch_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_hip_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0.064452 -0.1027"/>
+    <parent link="pelvis"/>
+    <child link="left_hip_pitch_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="139" lower="-2.5307" upper="2.8798" velocity="20"/>
+  </joint>
+  <link name="left_hip_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.029812 -0.001045 -0.087934"/>
+      <mass value="1.52"/>
+      <inertia ixx="0.0023773" ixy="-3.8E-06" ixz="-0.0003908" iyy="0.0024123" iyz="1.84E-05" izz="0.0016595"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_hip_roll_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_hip_roll_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_hip_roll_joint" type="revolute">
+    <origin rpy="0 -0.1749 0" xyz="0 0.052 -0.030465"/>
+    <parent link="left_hip_pitch_link"/>
+    <child link="left_hip_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="139" lower="-0.5236" upper="2.9671" velocity="20"/>
+  </joint>
+  <link name="left_hip_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.057709 -0.010981 -0.15078"/>
+      <mass value="2.083241"/>
+      <inertia ixx="0.0070715" ixy="-0.0006623" ixz="-0.0029312" iyy="0.0093175" iyz="-0.0008656" izz="0.003854"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_hip_yaw_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_hip_yaw_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_hip_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.025001 0 -0.12412"/>
+    <parent link="left_hip_roll_link"/>
+    <child link="left_hip_yaw_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="88" lower="-2.7576" upper="2.7576" velocity="32"/>
+  </joint>
+  <link name="left_knee_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.005457 0.003964 -0.12074"/>
+      <mass value="2.364759"/>
+      <inertia ixx="0.013867" ixy="5.90E-05" ixz="-5.50E-05" iyy="0.013803" iyz="-0.0008747" izz="0.0018566"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_knee_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_knee_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_knee_joint" type="revolute">
+    <origin rpy="0 0.1749 0" xyz="-0.078273 0.0021489 -0.17734"/>
+    <parent link="left_hip_yaw_link"/>
+    <child link="left_knee_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="139" lower="-0.087267" upper="2.8798" velocity="20"/>
+  </joint>
+  <link name="left_ankle_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.007269 0 0.011137"/>
+      <mass value="0.074"/>
+      <inertia ixx="8.4E-06" ixy="0" ixz="-2.9E-06" iyy="1.89E-05" iyz="0" izz="1.26E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_ankle_pitch_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_ankle_pitch_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ankle_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -9.4445E-05 -0.30001"/>
+    <parent link="left_knee_link"/>
+    <child link="left_ankle_pitch_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="35" lower="-0.87267" upper="0.5236" velocity="30"/>
+  </joint>
+  <link name="left_ankle_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.026505 0 -0.016425"/>
+      <mass value="0.608"/>
+      <inertia ixx="0.0002231" ixy="2E-07" ixz="8.91E-05" iyy="0.0016161" iyz="-1E-07" izz="0.0016667"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_ankle_roll_link.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.05 0.025 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.05 -0.025 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.12 0.03 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.12 -0.03 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ankle_roll_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 -0.017558"/>
+    <parent link="left_ankle_pitch_link"/>
+    <child link="left_ankle_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="35" lower="-0.2618" upper="0.2618" velocity="30"/>
+  </joint>
+  <link name="right_hip_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.002741 -0.047791 -0.02606"/>
+      <mass value="1.35"/>
+      <inertia ixx="0.001811" ixy="-3.68E-05" ixz="-3.44E-05" iyy="0.0014193" iyz="-0.000171" izz="0.0012812"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_hip_pitch_link.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_hip_pitch_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_hip_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -0.064452 -0.1027"/>
+    <parent link="pelvis"/>
+    <child link="right_hip_pitch_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="139" lower="-2.5307" upper="2.8798" velocity="20"/>
+  </joint>
+  <link name="right_hip_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.029812 0.001045 -0.087934"/>
+      <mass value="1.52"/>
+      <inertia ixx="0.0023773" ixy="3.8E-06" ixz="-0.0003908" iyy="0.0024123" iyz="-1.84E-05" izz="0.0016595"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_hip_roll_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_hip_roll_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_hip_roll_joint" type="revolute">
+    <origin rpy="0 -0.1749 0" xyz="0 -0.052 -0.030465"/>
+    <parent link="right_hip_pitch_link"/>
+    <child link="right_hip_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="139" lower="-2.9671" upper="0.5236" velocity="20"/>
+  </joint>
+  <link name="right_hip_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.057709 0.010981 -0.15078"/>
+      <mass value="2.083241"/>
+      <inertia ixx="0.0070715" ixy="0.0006623" ixz="-0.0029312" iyy="0.0093175" iyz="0.0008656" izz="0.003854"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_hip_yaw_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_hip_yaw_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_hip_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.025001 0 -0.12412"/>
+    <parent link="right_hip_roll_link"/>
+    <child link="right_hip_yaw_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="88" lower="-2.7576" upper="2.7576" velocity="32"/>
+  </joint>
+  <link name="right_knee_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.005457 -0.003964 -0.12074"/>
+      <mass value="2.364759"/>
+      <inertia ixx="0.013867" ixy="-5.90E-05" ixz="5.50E-05" iyy="0.013803" iyz="0.0008747" izz="0.0018566"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_knee_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_knee_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_knee_joint" type="revolute">
+    <origin rpy="0 0.1749 0" xyz="-0.078273 -0.0021489 -0.17734"/>
+    <parent link="right_hip_yaw_link"/>
+    <child link="right_knee_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="139" lower="-0.087267" upper="2.8798" velocity="20"/>
+  </joint>
+  <link name="right_ankle_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.007269 0 0.011137"/>
+      <mass value="0.074"/>
+      <inertia ixx="8.4E-06" ixy="0" ixz="-2.9E-06" iyy="1.89E-05" iyz="0" izz="1.26E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_ankle_pitch_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_ankle_pitch_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ankle_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 9.4445E-05 -0.30001"/>
+    <parent link="right_knee_link"/>
+    <child link="right_ankle_pitch_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="35" lower="-0.87267" upper="0.5236" velocity="30"/>
+  </joint>
+  <link name="right_ankle_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.026505 0 -0.016425"/>
+      <mass value="0.608"/>
+      <inertia ixx="0.0002231" ixy="-2E-07" ixz="8.91E-05" iyy="0.0016161" iyz="1E-07" izz="0.0016667"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_ankle_roll_link.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.05 0.025 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.05 -0.025 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.12 0.03 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.12 -0.03 -0.03"/>
+      <geometry>
+        <sphere radius="0.005"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ankle_roll_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 -0.017558"/>
+    <parent link="right_ankle_pitch_link"/>
+    <child link="right_ankle_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="35" lower="-0.2618" upper="0.2618" velocity="30"/>
+  </joint>
+  <!-- Torso -->
+  <link name="waist_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.003494 0.000233 0.018034"/>
+      <mass value="0.214"/>
+      <inertia ixx="0.00010673" ixy="2.703E-06" ixz="-7.631E-06" iyy="0.00010422" iyz="-2.01E-07" izz="0.0001625"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/waist_yaw_link_rev_1_0.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+  </link>
+  <joint name="waist_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="pelvis"/>
+    <child link="waist_yaw_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="88" lower="-2.618" upper="2.618" velocity="32"/>
+  </joint>
+  <link name="waist_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 2.3E-05 0"/>
+      <mass value="0.086"/>
+      <inertia ixx="7.079E-06" ixy="0" ixz="0" iyy="6.339E-06" iyz="0" izz="8.245E-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/waist_roll_link_rev_1_0.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+  </link>
+  <joint name="waist_roll_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.0039635 0 0.044"/>
+    <parent link="waist_yaw_link"/>
+    <child link="waist_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="35" lower="-0.52" upper="0.52" velocity="30"/>
+  </joint>
+  <link name="torso_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000931 0.000346 0.15082"/>
+      <mass value="6.78"/>
+      <inertia ixx="0.05905" ixy="3.3302E-05" ixz="-0.0017715" iyy="0.047014" iyz="-2.2399E-05" izz="0.025652"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/torso_link_rev_1_0.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/torso_link_rev_1_0.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="waist_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="waist_roll_link"/>
+    <child link="torso_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="35" lower="-0.52" upper="0.52" velocity="30"/>
+  </joint>
+  <!-- LOGO -->
+  <joint name="logo_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0039635 0 -0.044"/>
+    <parent link="torso_link"/>
+    <child link="logo_link"/>
+  </joint>
+  <link name="logo_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-7" ixy="0" ixz="0" iyy="1e-7" iyz="0" izz="1e-7"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/logo_link.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/logo_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- Head -->
+  <link name="head_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.005267 0.000299 0.449869"/>
+      <mass value="1.036"/>
+      <inertia ixx="0.004085051" ixy="-2.543E-06" ixz="-6.9455E-05" iyy="0.004185212" iyz="-3.726E-06" izz="0.001807911"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/head_link.STL"/>
+      </geometry>
+      <material name="g1_dark"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/head_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="head_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0039635 0 -0.044"/>
+    <parent link="torso_link"/>
+    <child link="head_link"/>
+  </joint>
+  <!-- IMU -->
+  <link name="imu_in_torso"/>
+  <joint name="imu_in_torso_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="-0.03959 -0.00224 0.14792"/>
+    <parent link="torso_link"/>
+    <child link="imu_in_torso"/>
+  </joint>
+  <link name="imu_in_pelvis"/>
+  <joint name="imu_in_pelvis_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.04525 0 -0.08339"/>
+    <parent link="pelvis"/>
+    <child link="imu_in_pelvis"/>
+  </joint>
+  <!-- d435 -->
+  <link name="d435_link"/>
+  <joint name="d435_joint" type="fixed">
+    <origin rpy="0 0.8307767239493009 0" xyz="0.0576235 0.01753 0.42987"/>
+    <parent link="torso_link"/>
+    <child link="d435_link"/>
+  </joint>
+  <!-- mid360 -->
+  <link name="mid360_link"/>
+  <joint name="mid360_joint" type="fixed">
+    <origin rpy="3.141592653589793 0.05112069379091391 0" xyz="0.0002835 0.00003 0.428434"/>
+    <parent link="torso_link"/>
+    <child link="mid360_link"/>
+  </joint>
+  <!-- Arm -->
+  <link name="left_shoulder_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0.035892 -0.011628"/>
+      <mass value="0.718"/>
+      <inertia ixx="0.0004291" ixy="-9.2E-06" ixz="6.4E-06" iyy="0.000453" iyz="2.26E-05" izz="0.000423"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_shoulder_pitch_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 1.5707963267948966 0" xyz="0 0.04 -0.01"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_shoulder_pitch_joint" type="revolute">
+    <origin rpy="0.27931 5.4949E-05 -0.00019159" xyz="0.0039563 0.10022 0.24778"/>
+    <parent link="torso_link"/>
+    <child link="left_shoulder_pitch_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="25" lower="-3.0892" upper="2.6704" velocity="37"/>
+  </joint>
+  <link name="left_shoulder_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000227 0.00727 -0.063243"/>
+      <mass value="0.643"/>
+      <inertia ixx="0.0006177" ixy="-1E-06" ixz="8.7E-06" iyy="0.0006912" iyz="-5.3E-06" izz="0.0003894"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_shoulder_roll_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.004 0.006 -0.053"/>
+      <geometry>
+        <cylinder length="0.03" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_shoulder_roll_joint" type="revolute">
+    <origin rpy="-0.27925 0 0" xyz="0 0.038 -0.013831"/>
+    <parent link="left_shoulder_pitch_link"/>
+    <child link="left_shoulder_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="25" lower="-1.5882" upper="2.2515" velocity="37"/>
+  </joint>
+  <link name="left_shoulder_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.010773 -0.002949 -0.072009"/>
+      <mass value="1.108691"/>
+      <inertia ixx="0.0015087" ixy="1.2E-05" ixz="0.0002133" iyy="0.0016019" iyz="-4.32E-05" izz="0.0006577"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_shoulder_yaw_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_shoulder_yaw_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_shoulder_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 0.00624 -0.1032"/>
+    <parent link="left_shoulder_roll_link"/>
+    <child link="left_shoulder_yaw_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="25" lower="-2.618" upper="2.618" velocity="37"/>
+  </joint>
+  <link name="left_elbow_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.064956 0.004454 -0.010062"/>
+      <mass value="0.906288"/>
+      <inertia ixx="0.0004367" ixy="9.86E-05" ixz="2.60E-05" iyy="0.0006272" iyz="-8.5E-06" izz="0.0006339"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_elbow_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_elbow_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_elbow_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.015783 0 -0.080518"/>
+    <parent link="left_shoulder_yaw_link"/>
+    <child link="left_elbow_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="25" lower="-1.0472" upper="2.0944" velocity="37"/>
+  </joint>
+  <joint name="left_wrist_roll_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.100 0.00188791 -0.010"/>
+    <axis xyz="1 0 0"/>
+    <parent link="left_elbow_link"/>
+    <child link="left_wrist_roll_link"/>
+    <limit effort="25" lower="-1.972222054" upper="1.972222054" velocity="37"/>
+  </joint>
+  <link name="left_wrist_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.01713944778 0.00053759094 0.00000048864"/>
+      <mass value="0.08544498"/>
+      <inertia ixx="0.00004821544023" ixy="-0.00000424511021" ixz="0.00000000510599" iyy="0.00003722899093" iyz="-0.00000000123525" izz="0.00005482106541"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_wrist_roll_link_5010.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_wrist_roll_link_5010.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_wrist_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.038 0 0"/>
+    <axis xyz="0 1 0"/>
+    <parent link="left_wrist_roll_link"/>
+    <child link="left_wrist_pitch_link"/>
+    <limit effort="13.4" lower="-1.614429558" upper="1.614429558" velocity="27"/>
+  </joint>
+  <link name="left_wrist_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.02549150483 -0.00054042511 -0.00054143853"/>
+      <mass value="0.684"/>
+      <inertia ixx="0.00025599000747" ixy="-0.00000861777083" ixz="-0.00000857523406" iyy="0.00071633247299" iyz="-0.00000013994720" izz="0.00071591991283"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_wrist_pitch_link_5010.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_wrist_pitch_link_5010.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_wrist_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.051 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="left_wrist_pitch_link"/>
+    <child link="left_wrist_yaw_link"/>
+    <limit effort="13.4" lower="-1.614429558" upper="1.614429558" velocity="27"/>
+  </joint>
+  <link name="left_wrist_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.02200381568 0.00049485096 0.00053861123"/>
+      <mass value="0.08457647"/>
+      <inertia ixx="0.00004929128828" ixy="-0.00000045735494" ixz="0.00000445867591" iyy="0.00005973338134" iyz="0.00000043217198" izz="0.00003928083826"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_wrist_yaw_link_5010.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/left_wrist_yaw_link_5010.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <link name="right_shoulder_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 -0.035892 -0.011628"/>
+      <mass value="0.718"/>
+      <inertia ixx="0.0004291" ixy="9.2E-06" ixz="6.4E-06" iyy="0.000453" iyz="-2.26E-05" izz="0.000423"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_shoulder_pitch_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 1.5707963267948966 0" xyz="0 -0.04 -0.01"/>
+      <geometry>
+        <cylinder length="0.05" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_shoulder_pitch_joint" type="revolute">
+    <origin rpy="-0.27931 5.4949E-05 0.00019159" xyz="0.0039563 -0.10021 0.24778"/>
+    <parent link="torso_link"/>
+    <child link="right_shoulder_pitch_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="25" lower="-3.0892" upper="2.6704" velocity="37"/>
+  </joint>
+  <link name="right_shoulder_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000227 -0.00727 -0.063243"/>
+      <mass value="0.643"/>
+      <inertia ixx="0.0006177" ixy="1E-06" ixz="8.7E-06" iyy="0.0006912" iyz="5.3E-06" izz="0.0003894"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_shoulder_roll_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.004 -0.006 -0.053"/>
+      <geometry>
+        <cylinder length="0.03" radius="0.03"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_shoulder_roll_joint" type="revolute">
+    <origin rpy="0.27925 0 0" xyz="0 -0.038 -0.013831"/>
+    <parent link="right_shoulder_pitch_link"/>
+    <child link="right_shoulder_roll_link"/>
+    <axis xyz="1 0 0"/>
+    <limit effort="25" lower="-2.2515" upper="1.5882" velocity="37"/>
+  </joint>
+  <link name="right_shoulder_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.010773 0.002949 -0.072009"/>
+      <mass value="1.108691"/>
+      <inertia ixx="0.0015087" ixy="-1.2E-05" ixz="0.0002133" iyy="0.0016019" iyz="4.32E-05" izz="0.0006577"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_shoulder_yaw_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_shoulder_yaw_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_shoulder_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0 -0.00624 -0.1032"/>
+    <parent link="right_shoulder_roll_link"/>
+    <child link="right_shoulder_yaw_link"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="25" lower="-2.618" upper="2.618" velocity="37"/>
+  </joint>
+  <link name="right_elbow_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.064956 -0.004454 -0.010062"/>
+      <mass value="0.906288"/>
+      <inertia ixx="0.0004367" ixy="-9.86E-05" ixz="2.60E-05" iyy="0.0006272" iyz="8.5E-06" izz="0.0006339"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_elbow_link.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_elbow_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_elbow_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.015783 0 -0.080518"/>
+    <parent link="right_shoulder_yaw_link"/>
+    <child link="right_elbow_link"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="25" lower="-1.0472" upper="2.0944" velocity="37"/>
+  </joint>
+  <joint name="right_wrist_roll_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.100 -0.00188791 -0.010"/>
+    <axis xyz="1 0 0"/>
+    <parent link="right_elbow_link"/>
+    <child link="right_wrist_roll_link"/>
+    <limit effort="25" lower="-1.972222054" upper="1.972222054" velocity="37"/>
+  </joint>
+  <link name="right_wrist_roll_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.01713944778 -0.00053759094 0.00000048864"/>
+      <mass value="0.08544498"/>
+      <inertia ixx="0.00004821544023" ixy="0.00000424511021" ixz="0.00000000510599" iyy="0.00003722899093" iyz="0.00000000123525" izz="0.00005482106541"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_wrist_roll_link_5010.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_wrist_roll_link_5010.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_wrist_pitch_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.038 0 0"/>
+    <axis xyz="0 1 0"/>
+    <parent link="right_wrist_roll_link"/>
+    <child link="right_wrist_pitch_link"/>
+    <limit effort="13.4" lower="-1.614429558" upper="1.614429558" velocity="27"/>
+  </joint>
+  <link name="right_wrist_pitch_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.02549150483 0.00054042511 -0.00054143853"/>
+      <mass value="0.684"/>
+      <inertia ixx="0.00025599000747" ixy="0.00000861777083" ixz="0.00000857523406" iyy="0.00071633247299" iyz="-0.00000013994720" izz="0.00071591991283"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_wrist_pitch_link_5010.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_wrist_pitch_link_5010.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_wrist_yaw_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.051 0 0"/>
+    <axis xyz="0 0 1"/>
+    <parent link="right_wrist_pitch_link"/>
+    <child link="right_wrist_yaw_link"/>
+    <limit effort="13.4" lower="-1.614429558" upper="1.614429558" velocity="27"/>
+  </joint>
+  <link name="right_wrist_yaw_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.02200381568 -0.00049485096 0.00053861123"/>
+      <mass value="0.08457647"/>
+      <inertia ixx="0.00004929128828" ixy="0.00000045735494" ixz="0.00000445867591" iyy="0.00005973338134" iyz="-0.00000043217198" izz="0.00003928083826"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_wrist_yaw_link_5010.STL"/>
+      </geometry>
+      <material name="g1_white"/>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/g1/right_wrist_yaw_link_5010.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_inspire_coupler_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.041 0 0"/>
+    <parent link="left_wrist_yaw_link"/>
+    <child link="left_inspire_coupler"/>
+  </joint>
+  <link name="left_inspire_coupler">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.0204"/>
+      <inertia ixx="6.2934e-06" ixy="0" ixz="0" iyy="3.8267e-06" iyz="0" izz="3.8267e-06"/>
+    </inertial>
+  </link>
+  <joint name="right_inspire_coupler_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.041 0 0"/>
+    <parent link="right_wrist_yaw_link"/>
+    <child link="right_inspire_coupler"/>
+  </joint>
+  <link name="right_inspire_coupler">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="0.0204"/>
+      <inertia ixx="6.2934e-06" ixy="0" ixz="0" iyy="3.8267e-06" iyz="0" izz="3.8267e-06"/>
+    </inertial>
+  </link>
+  <!-- Joint to attach the hand to parent link -->
+  <joint name="left_hand_connection_joint" type="fixed">
+    <origin rpy="-1.5707963267948966 0 -1.5707963267948966" xyz="0.042 0 0"/>
+    <parent link="left_wrist_yaw_link"/>
+    <child link="left_base"/>
+  </joint>
+  <!-- Base link (attachment point) -->
+  <link name="left_base"/>
+  <!-- Hand base joint (coordinate transform from arm frame to hand frame) -->
+  <joint name="left_hand_base_joint" type="fixed">
+    <parent link="left_base"/>
+    <child link="left_hand_base_link"/>
+    <origin rpy="3.14159 0 0" xyz="0 0 0"/>
+  </joint>
+  <!-- hand_base_link -->
+  <link name="left_hand_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000585306500185456 -4.36854347835025E-08 -0.018822662550448"/>
+      <mass value="0.090"/>
+      <inertia ixx="2.78685380929126E-05" ixy="-4.78139504897991E-11" ixz="-3.96465915290869E-08" iyy="2.67805393378652E-05" iyz="-1.05835026288552E-11" izz="3.64886767005748E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_base_link.STL"/>
+      </geometry>
+      <material name="rh56e2_silver">
+        <color rgba="0.60 0.61 0.64 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_base_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- thumb_proximal -->
+  <link name="left_thumb_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0017333 -0.0098301 -0.0058388"/>
+      <mass value="0.015370"/>
+      <inertia ixx="5.963987e-07" ixy="1.670872e-08" ixz="-2.853095e-09" iyy="5.045580e-07" iyz="1.620077e-08" izz="5.177812e-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_proximal_yaw_joint" type="revolute">
+    <origin rpy="3.1416 0 0" xyz="0.02101 0.0269 -0.0826"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_thumb_proximal"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="1" lower="0" upper="1.658" velocity="2"/>
+  </joint>
+  <!-- thumb_metacarpal -->
+  <link name="left_thumb_metacarpal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0300474 0.0120861 0.0058565"/>
+      <mass value="0.110340"/>
+      <inertia ixx="3.231551e-05" ixy="-4.873084e-06" ixz="3.453664e-06" iyy="3.992941e-05" iyz="8.490370e-07" izz="5.137254e-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_proximal_pitch_joint" type="revolute">
+    <origin rpy="1.5708 0 -1.5708" xyz="0.013438 -0.012862 -0.0076"/>
+    <parent link="left_thumb_proximal"/>
+    <child link="left_thumb_metacarpal"/>
+    <axis xyz="0.17365 0 0.98481"/>
+    <limit effort="1" lower="0" upper="0.62" velocity="2"/>
+  </joint>
+  <!-- thumb_intermediate -->
+  <link name="left_thumb_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0125068 -0.0001768 0.0089607"/>
+      <mass value="0.017790"/>
+      <inertia ixx="3.354404e-06" ixy="-1.288774e-07" ixz="-1.684640e-08" iyy="2.709156e-06" iyz="2.834441e-08" izz="3.190569e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.052954 0.032799 -0.0093372"/>
+    <parent link="left_thumb_metacarpal"/>
+    <child link="left_thumb_intermediate"/>
+    <axis xyz="0.17365 0 0.98481"/>
+    <limit effort="1" lower="0" upper="0.5410520681182421" velocity="2"/>
+    <mimic joint="left_thumb_proximal_pitch_joint" multiplier="0.8392" offset="0"/>
+  </joint>
+  <!-- thumb_force_sensor_2 -->
+  <link name="left_thumb_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-6.77023624058581E-05 0.00023698475781915 -0.000558267314746952"/>
+      <mass value="0.000119024235960817"/>
+      <inertia ixx="1.0224514684709E-09" ixy="-6.7224050154412E-13" ixz="-1.14240885059404E-12" iyy="9.97038953350155E-10" iyz="-8.16379211588012E-12" izz="1.9906514552054E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_force_sensor_2_joint" type="fixed">
+    <origin rpy="0.96258 1.4071 3.0993" xyz="0.0080283 0.016443 0.00982"/>
+    <parent link="left_thumb_intermediate"/>
+    <child link="left_thumb_force_sensor_2"/>
+  </joint>
+  <!-- thumb_distal -->
+  <link name="left_thumb_distal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0145445 0.0079048 0.0075901"/>
+      <mass value="0.007660"/>
+      <inertia ixx="9.459336e-07" ixy="-1.685929e-07" ixz="-9.785393e-09" iyy="5.002186e-07" iyz="2.972642e-08" izz="8.922341e-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_4.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_4.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_distal_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.01865 0.013373 -0.0022731"/>
+    <parent link="left_thumb_intermediate"/>
+    <child link="left_thumb_distal"/>
+    <axis xyz="0.17365 0 0.98481"/>
+    <limit effort="1" lower="0" upper="0.45553093477052004" velocity="2"/>
+    <mimic joint="left_thumb_proximal_pitch_joint" multiplier="0.7477272" offset="0"/>
+  </joint>
+  <!-- thumb_force_sensor_3 -->
+  <link name="left_thumb_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="2.75155276924233E-07 0.000696644789683842 -0.000425123283601309"/>
+      <mass value="0.000169894176021865"/>
+      <inertia ixx="3.91695563569899E-09" ixy="-3.84881369197044E-15" ixz="2.56832047427422E-13" iyy="1.41883437204732E-09" iyz="-1.72956740679056E-10" izz="5.29524834856028E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_force_sensor_3_joint" type="fixed">
+    <origin rpy="0.64092 1.3963 -3.1415" xyz="0.0076349 0.020486 0.0088094"/>
+    <parent link="left_thumb_distal"/>
+    <child link="left_thumb_force_sensor_3"/>
+  </joint>
+  <!-- thumb_force_sensor_4 -->
+  <link name="left_thumb_force_sensor_4">
+    <inertial>
+      <origin rpy="0 0 0" xyz="1.53421438291515E-06 -0.000421608116505295 -0.000751976730520715"/>
+      <mass value="1.66991074236564E-05"/>
+      <inertia ixx="2.2577332779412E-11" ixy="2.52363008433222E-15" ixz="-5.30005584942463E-15" iyy="2.30774417460483E-11" iyz="1.74406833632406E-13" izz="4.31637280809456E-11"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_4.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_4.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_force_sensor_4_joint" type="fixed">
+    <origin rpy="1.7521 1.3962 -3.1401" xyz="0.018831 0.027914 0.0068352"/>
+    <parent link="left_thumb_distal"/>
+    <child link="left_thumb_force_sensor_4"/>
+  </joint>
+  <!-- thumb_force_sensor_1 -->
+  <link name="left_thumb_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000315253413178729 8.00831279870462E-05 -0.000511444693418101"/>
+      <mass value="0.000234351522411044"/>
+      <inertia ixx="6.82585459105814E-09" ixy="1.33330535751836E-11" ixz="-9.2406741263255E-12" iyy="2.91720696731406E-09" iyz="-1.79692153239885E-10" izz="9.68920415325705E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_thumb_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_thumb_force_sensor_1_joint" type="fixed">
+    <origin rpy="1.1285 1.3976 3.1383" xyz="0.023412 0.033251 0.0070079"/>
+    <parent link="left_thumb_metacarpal"/>
+    <child link="left_thumb_force_sensor_1"/>
+  </joint>
+  <!-- index_proximal -->
+  <link name="left_index_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021996 0.0127444 -0.0066483"/>
+      <mass value="0.018690"/>
+      <inertia ixx="3.117990e-06" ixy="-2.025856e-07" ixz="2.168038e-10" iyy="1.515251e-06" iyz="-4.287428e-11" izz="3.235671e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_index_proximal_joint" type="revolute">
+    <origin rpy="-1.5359 0 0" xyz="0.00056467 0.038679 -0.1564"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_index_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="2"/>
+  </joint>
+  <!-- index_intermediate -->
+  <link name="left_index_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0005328 0.0253270 -0.0060927"/>
+      <mass value="0.011020"/>
+      <inertia ixx="2.508262e-06" ixy="-4.493592e-07" ixz="5.276463e-10" iyy="4.390646e-07" iyz="3.369522e-09" izz="2.546117e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_index_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 -0.00055"/>
+    <parent link="left_index_proximal"/>
+    <child link="left_index_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="2"/>
+    <mimic joint="left_index_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- index_force_sensor_2 -->
+  <link name="left_index_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.000722888601375635 0.000206469730474002 3.92383751648961E-06"/>
+      <mass value="0.000255748193489171"/>
+      <inertia ixx="7.12568463704182E-09" ixy="-3.0516440505427E-11" ixz="-1.50421802884703E-12" iyy="2.43957953886851E-09" iyz="-8.64189585164301E-11" izz="4.79877681662902E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_index_force_sensor_2_joint" type="fixed">
+    <origin rpy="-0.037141 0 -0.34877" xyz="0.0081655 0.037446 -0.0060795"/>
+    <parent link="left_index_intermediate"/>
+    <child link="left_index_force_sensor_2"/>
+  </joint>
+  <!-- index_force_sensor_3 -->
+  <link name="left_index_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="2.48711721375083E-05 -0.000345284190379214 -0.00133798868635948"/>
+      <mass value="6.79653902597574E-05"/>
+      <inertia ixx="1.31976080328049E-10" ixy="-5.65097777117389E-12" ixz="-7.80108678689416E-13" iyy="2.53434465829639E-10" iyz="9.12174680571318E-12" izz="2.80536891506937E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_index_force_sensor_3_joint" type="fixed">
+    <origin rpy="-1.5708 1.5252 -0.87237" xyz="0.0086237 0.052572 -0.0060954"/>
+    <parent link="left_index_intermediate"/>
+    <child link="left_index_force_sensor_3"/>
+  </joint>
+  <!-- index_force_sensor_1 -->
+  <link name="left_index_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-4.3998E-06 0.00011649 -0.00056743"/>
+      <mass value="0.00020279"/>
+      <inertia ixx="3.3806E-09" ixy="5.0688E-11" ixz="2.189E-13" iyy="1.9643E-09" iyz="-5.5263E-12" izz="5.2813E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_index_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_index_force_sensor_1_joint" type="fixed">
+    <origin rpy="-1.5708 1.5351 -1.3587" xyz="0.012046 0.019649 -0.006651"/>
+    <parent link="left_index_proximal"/>
+    <child link="left_index_force_sensor_1"/>
+  </joint>
+  <!-- middle_proximal -->
+  <link name="left_middle_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021996 0.0127444 -0.0066483"/>
+      <mass value="0.018660"/>
+      <inertia ixx="3.112985e-06" ixy="-2.022604e-07" ixz="2.164558e-10" iyy="1.512818e-06" iyz="-4.280547e-11" izz="3.230477e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_middle_proximal_joint" type="revolute">
+    <origin rpy="-1.5708 0 0" xyz="0.00056467 0.0171 -0.157"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_middle_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="2"/>
+  </joint>
+  <!-- middle_intermediate -->
+  <link name="left_middle_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0000931 0.0270238 -0.0061002"/>
+      <mass value="0.017670"/>
+      <inertia ixx="4.542552e-06" ixy="-7.963686e-07" ixz="-7.267545e-12" iyy="7.189362e-07" iyz="6.229901e-11" izz="4.617700e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_middle_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 -0.00055"/>
+    <parent link="left_middle_proximal"/>
+    <child link="left_middle_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="2"/>
+    <mimic joint="left_middle_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- middle_force_sensor_2 -->
+  <link name="left_middle_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="6.77351601419129E-07 2.94313229363685E-05 -0.00072242577649223"/>
+      <mass value="0.000262573593923136"/>
+      <inertia ixx="5.0414876593695E-09" ixy="1.87053180725797E-13" ixz="-1.92198399992304E-14" iyy="2.56777987860698E-09" iyz="3.4715059658037E-12" izz="7.49457837348385E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_middle_force_sensor_2_joint" type="fixed">
+    <origin rpy="-1.0917 1.5708 -1.4646" xyz="0.009086 0.040962 -0.0061003"/>
+    <parent link="left_middle_intermediate"/>
+    <child link="left_middle_force_sensor_2"/>
+  </joint>
+  <!-- middle_force_sensor_3 -->
+  <link name="left_middle_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-8.06940798625533E-08 -0.00036544469914071 -0.00127684015275201"/>
+      <mass value="6.64914272946078E-05"/>
+      <inertia ixx="1.27227716200643E-10" ixy="-8.96643675660692E-15" ixz="-8.77104798534102E-15" iyy="2.43691020872163E-10" iyz="7.612765414699E-12" izz="2.75875028961974E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_middle_force_sensor_3_joint" type="fixed">
+    <origin rpy="-2.1401 1.5708 -1.4657" xyz="0.0098294 0.056051 -0.0061006"/>
+    <parent link="left_middle_intermediate"/>
+    <child link="left_middle_force_sensor_3"/>
+  </joint>
+  <!-- middle_force_sensor_1 -->
+  <link name="left_middle_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-2.38805233365724E-07 0.000116575254234724 -0.000567426156928438"/>
+      <mass value="0.000202794522112893"/>
+      <inertia ixx="3.38243621902089E-09" ixy="2.84614711307975E-14" ixz="2.15581663022967E-14" iyy="1.96244127906421E-09" iyz="-5.53035968075616E-12" izz="5.28129636598907E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_middle_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_middle_force_sensor_1_joint" type="fixed">
+    <origin rpy="-1.9353 1.5708 -1.7232" xyz="0.012046 0.019649 -0.006651"/>
+    <parent link="left_middle_proximal"/>
+    <child link="left_middle_force_sensor_1"/>
+  </joint>
+  <!-- ring_proximal -->
+  <link name="left_ring_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021996 0.0127444 -0.0066483"/>
+      <mass value="0.018690"/>
+      <inertia ixx="3.117990e-06" ixy="-2.025856e-07" ixz="2.168038e-10" iyy="1.515251e-06" iyz="-4.287421e-11" izz="3.235671e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ring_proximal_joint" type="revolute">
+    <origin rpy="-1.6232 0 0" xyz="0.00056467 -0.0045302 -0.15683"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_ring_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="2"/>
+  </joint>
+  <!-- ring_intermediate -->
+  <link name="left_ring_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0005328 0.0253270 -0.0060927"/>
+      <mass value="0.011020"/>
+      <inertia ixx="2.508262e-06" ixy="-4.493592e-07" ixz="5.276463e-10" iyy="4.390646e-07" iyz="3.369522e-09" izz="2.546117e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ring_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 -0.00055"/>
+    <parent link="left_ring_proximal"/>
+    <child link="left_ring_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="2"/>
+    <mimic joint="left_ring_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- ring_force_sensor_2 -->
+  <link name="left_ring_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="1.52347834204147E-05 0.000205944196068869 -0.000722888366917224"/>
+      <mass value="0.000255748190883527"/>
+      <inertia ixx="4.79445247031254E-09" ixy="-1.32856442478724E-10" ixz="-1.33138092624363E-12" iyy="2.44390356832089E-09" iyz="-3.0524509743324E-11" izz="7.1256841969102E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ring_force_sensor_2_joint" type="fixed">
+    <origin rpy="1.5708 1.5151 1.222" xyz="0.0081655 0.037446 -0.0060795"/>
+    <parent link="left_ring_intermediate"/>
+    <child link="left_ring_force_sensor_2"/>
+  </joint>
+  <!-- ring_force_sensor_3 -->
+  <link name="left_ring_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.45503841600947E-05 -0.00034586662981545 -0.00133798468205445"/>
+      <mass value="6.79657634628817E-05"/>
+      <inertia ixx="1.32269553838889E-10" ixy="8.21009692820913E-12" ixz="2.62881491754241E-13" iyy="2.53144228524505E-10" iyz="9.1509693922259E-12" izz="2.80539793431039E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ring_force_sensor_3_joint" type="fixed">
+    <origin rpy="1.5708 1.5025 2.2692" xyz="0.0086237 0.052572 -0.0060954"/>
+    <parent link="left_ring_intermediate"/>
+    <child link="left_ring_force_sensor_3"/>
+  </joint>
+  <!-- ring_force_sensor_1 -->
+  <link name="left_ring_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="6.00203522233E-06 0.000116421389729365 -0.000567426346437278"/>
+      <mass value="0.000202794434376476"/>
+      <inertia ixx="3.37837011170987E-09" ixy="-7.5878752969108E-11" ixz="-2.74580423233197E-13" iyy="1.9665061826483E-09" iyz="-5.52393135574737E-12" izz="5.28129521919666E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_ring_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_ring_force_sensor_1_joint" type="fixed">
+    <origin rpy="1.5708 1.5172 1.7829" xyz="0.012046 0.019649 -0.006651"/>
+    <parent link="left_ring_proximal"/>
+    <child link="left_ring_force_sensor_1"/>
+  </joint>
+  <!-- pinky_proximal -->
+  <link name="left_pinky_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021996 0.0127444 -0.0066483"/>
+      <mass value="0.018690"/>
+      <inertia ixx="3.117990e-06" ixy="-2.025856e-07" ixz="2.168038e-10" iyy="1.515251e-06" iyz="-4.287428e-11" izz="3.235671e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_pinky_proximal_joint" type="revolute">
+    <origin rpy="-1.6755 0 0" xyz="0.00056467 -0.025916 -0.15365"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_pinky_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="2"/>
+  </joint>
+  <!-- pinky_intermediate -->
+  <link name="left_pinky_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0014308 0.0206253 -0.0060996"/>
+      <mass value="0.011660"/>
+      <inertia ixx="1.862061e-06" ixy="-3.607484e-07" ixz="-3.135603e-11" iyy="4.314954e-07" iyz="-5.096542e-11" izz="1.868029e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_pinky_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 -0.00055"/>
+    <parent link="left_pinky_proximal"/>
+    <child link="left_pinky_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="2"/>
+    <mimic joint="left_pinky_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- pinky_force_sensor_2 -->
+  <link name="left_pinky_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.80617030003938E-05 -0.000118388090762839 -0.000773722865995793"/>
+      <mass value="0.00028024674848609"/>
+      <inertia ixx="5.3604473912048E-09" ixy="-2.90383767216199E-10" ixz="4.21250471348326E-12" iyy="2.78880843363607E-09" iyz="3.60559684736873E-11" izz="8.00957473963412E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_pinky_force_sensor_2_joint" type="fixed">
+    <origin rpy="1.5708 1.4597 1.2289" xyz="0.0064514 0.027683 -0.0061172"/>
+    <parent link="left_pinky_intermediate"/>
+    <child link="left_pinky_force_sensor_2"/>
+  </joint>
+  <!-- pinky_force_sensor_3 -->
+  <link name="left_pinky_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-6.37037928365447E-05 -0.000437210531355342 -0.00112816117408027"/>
+      <mass value="6.1053667014177E-05"/>
+      <inertia ixx="1.11591596284049E-10" ixy="1.48923286911394E-11" ixz="1.18294492348375E-12" iyy="2.17206534673202E-10" iyz="8.078835709315E-12" izz="2.52052305203803E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_pinky_force_sensor_3_joint" type="fixed">
+    <origin rpy="1.5708 1.4336 2.2761" xyz="0.0063973 0.042707 -0.0061154"/>
+    <parent link="left_pinky_intermediate"/>
+    <child link="left_pinky_force_sensor_3"/>
+  </joint>
+  <!-- pinky_force_sensor_1 -->
+  <link name="left_pinky_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="1.22242688667118E-05 0.000115932853490763 -0.000567426208360044"/>
+      <mass value="0.000202794502264302"/>
+      <inertia ixx="3.3662161038664E-09" ixy="-1.50896082438854E-10" ixz="-5.69773684986878E-13" iyy="1.97866156369565E-09" iyz="-5.50105749422691E-12" izz="5.28129655313475E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_little_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_pinky_force_sensor_1_joint" type="fixed">
+    <origin rpy="1.5708 1.4637 1.7829" xyz="0.012046 0.019649 -0.006651"/>
+    <parent link="left_pinky_proximal"/>
+    <child link="left_pinky_force_sensor_1"/>
+  </joint>
+  <!-- palm_1 -->
+  <link name="left_palm_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0020714 0.0000896 0.0575537"/>
+      <mass value="0.475257"/>
+      <inertia ixx="7.199837e-04" ixy="-5.518871e-06" ixz="4.761736e-05" iyy="5.541947e-04" iyz="1.267342e-05" izz="3.248666e-04"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_plam_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_plam_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_palm_1_joint" type="fixed">
+    <origin rpy="-3.1416 0 0" xyz="0 0 -0.031"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_palm_1"/>
+  </joint>
+  <!-- palm_2 -->
+  <link name="left_palm_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0282279108648417 -0.000242127035993855 0.0835826421996247"/>
+      <mass value="0.0205046589058927"/>
+      <inertia ixx="2.37671048423346E-05" ixy="-1.29072575162348E-08" ixz="-6.43764479926857E-08" iyy="1.27843040563581E-05" iyz="9.82907716155009E-08" izz="1.20351729261164E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_plam_2.STL"/>
+      </geometry>
+      <material name="rh56e2_white">
+        <color rgba="0.93 0.93 0.93 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_plam_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_palm_2_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="left_palm_1"/>
+    <child link="left_palm_2"/>
+  </joint>
+  <!-- palm_force_sensor -->
+  <link name="left_palm_force_sensor">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.00012009333519819 0.000717297413646942 -0.000692889069965077"/>
+      <mass value="0.00240886556268154"/>
+      <inertia ixx="1.79237847416138E-07" ixy="-3.62335250995994E-10" ixz="2.06838829667416E-10" iyy="5.01887324843563E-07" iyz="-4.23537057624356E-10" izz="6.80017237748538E-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_plam_force_sensor.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_left/left_plam_force_sensor.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="left_palm_force_sensor_joint" type="fixed">
+    <origin rpy="1.5708 0 1.5708" xyz="0.012296 -0.00036819 0.088601"/>
+    <parent link="left_palm_1"/>
+    <child link="left_palm_force_sensor"/>
+  </joint>
+  <!-- Three-finger grasp TCP -->
+  <link name="left_tcp">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1e-06"/>
+      <inertia ixx="1e-09" ixy="0" ixz="0" iyy="1e-09" iyz="0" izz="1e-09"/>
+    </inertial>
+  </link>
+  <joint name="left_tcp_joint" type="fixed">
+    <!-- Measured tcp position relative to base frame -->
+    <origin rpy="3.14 -1.0 0" xyz="0.105 0.0 -0.155"/>
+    <parent link="left_hand_base_link"/>
+    <child link="left_tcp"/>
+  </joint>
+  <link name="left_tcp_three_fingers"/>
+  <joint name="left_tcp_three_fingers_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 -0.025 0.0"/>
+    <parent link="left_tcp"/>
+    <child link="left_tcp_three_fingers"/>
+  </joint>
+  <link name="left_tcp_pinch"/>
+  <joint name="left_tcp_pinch_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 -0.030 0.0"/>
+    <parent link="left_tcp"/>
+    <child link="left_tcp_pinch"/>
+  </joint>
+  <link name="left_tcp_full_hand"/>
+  <joint name="left_tcp_full_hand_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+    <parent link="left_tcp"/>
+    <child link="left_tcp_full_hand"/>
+  </joint>
+  <!-- Joint to attach the hand to parent link -->
+  <joint name="right_hand_connection_joint" type="fixed">
+    <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="0.042 0 0"/>
+    <parent link="right_wrist_yaw_link"/>
+    <child link="right_base"/>
+  </joint>
+  <!-- Base link (attachment point) -->
+  <link name="right_base"/>
+  <!-- Hand base joint (coordinate transform from arm frame to hand frame) -->
+  <joint name="right_hand_base_joint" type="fixed">
+    <parent link="right_base"/>
+    <child link="right_hand_base_link"/>
+    <origin rpy="3.14159 0 0" xyz="0 0 0"/>
+  </joint>
+  <!-- hand_base_link -->
+  <link name="right_hand_base_link">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000585306500185456 4.36854347835025E-08 -0.018822662550448"/>
+      <mass value="0.090"/>
+      <inertia ixx="2.78685380929126E-05" ixy="4.78139504897991E-11" ixz="-3.96465915290869E-08" iyy="2.67805393378652E-05" iyz="1.05835026288552E-11" izz="3.64886767005748E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_base_link.STL"/>
+      </geometry>
+      <material name="rh56e2_silver">
+        <color rgba="0.60 0.61 0.64 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_base_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <!-- palm_1 -->
+  <link name="right_palm_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0020714 -0.0000896 0.0580537"/>
+      <mass value="0.475256"/>
+      <inertia ixx="7.199834e-04" ixy="5.518868e-06" ixz="4.761734e-05" iyy="5.541945e-04" iyz="-1.267341e-05" izz="3.248664e-04"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_plam_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_plam_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_palm_1_joint" type="fixed">
+    <origin rpy="3.1416 0 0" xyz="0 0 -0.0305"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_palm_1"/>
+  </joint>
+  <!-- palm_2 -->
+  <link name="right_palm_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0282100608260238 0.000132227033478396 0.0839719055779739"/>
+      <mass value="0.0205048839537772"/>
+      <inertia ixx="2.37673054390923E-05" ixy="-1.16564699359491E-08" ixz="-5.54590775737826E-08" iyy="1.27806531035507E-05" iyz="1.11375407726514E-07" izz="1.20388397724151E-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_plam_2.STL"/>
+      </geometry>
+      <material name="rh56e2_white">
+        <color rgba="0.93 0.93 0.93 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_plam_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_palm_2_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0 0 0"/>
+    <parent link="right_palm_1"/>
+    <child link="right_palm_2"/>
+  </joint>
+  <!-- palm_force_sensor -->
+  <link name="right_palm_force_sensor">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000120426998705993 0.000717269735097647 -0.000692893490077784"/>
+      <mass value="0.00240887838334331"/>
+      <inertia ixx="1.79240988219058E-07" ixy="3.52975851762018E-10" ixz="-2.06008106501924E-10" iyy="5.01925283180791E-07" iyz="-4.23311043076944E-10" izz="6.80058313221634E-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_plam_force_sensor.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_plam_force_sensor.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_palm_force_sensor_joint" type="fixed">
+    <origin rpy="1.5708 0 1.5708" xyz="0.012296 0.00036819 0.089101"/>
+    <parent link="right_palm_1"/>
+    <child link="right_palm_force_sensor"/>
+  </joint>
+  <!-- thumb_proximal -->
+  <link name="right_thumb_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0017333 0.0098301 -0.0058388"/>
+      <mass value="0.015370"/>
+      <inertia ixx="5.963955e-07" ixy="-1.671741e-08" ixz="-2.859949e-09" iyy="5.045611e-07" iyz="-1.619956e-08" izz="5.177812e-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_proximal_yaw_joint" type="revolute">
+    <origin rpy="-3.1416 0 0" xyz="0.02101 -0.0269 -0.0826"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_thumb_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.658" velocity="2"/>
+  </joint>
+  <!-- thumb_metacarpal -->
+  <link name="right_thumb_metacarpal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0300526 0.0120861 0.0058857"/>
+      <mass value="0.110340"/>
+      <inertia ixx="3.232479e-05" ixy="4.869589e-06" ixz="-3.479152e-06" iyy="3.992941e-05" iyz="8.688589e-07" izz="5.136326e-05"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_proximal_pitch_joint" type="revolute">
+    <origin rpy="1.5708 0 -1.5708" xyz="0.013438 0.012862 -0.0076"/>
+    <parent link="right_thumb_proximal"/>
+    <child link="right_thumb_metacarpal"/>
+    <axis xyz="0.17365 0 -0.98481"/>
+    <limit effort="1" lower="0" upper="0.62" velocity="2"/>
+  </joint>
+  <!-- thumb_intermediate -->
+  <link name="right_thumb_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0125081 -0.0001768 0.0089679"/>
+      <mass value="0.017790"/>
+      <inertia ixx="3.346067e-06" ixy="1.307996e-07" ixz="3.975044e-08" iyy="2.709156e-06" iyz="1.744363e-08" izz="3.198905e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.052954 0.032799 -0.0093372"/>
+    <parent link="right_thumb_metacarpal"/>
+    <child link="right_thumb_intermediate"/>
+    <axis xyz="0.17365 0 -0.98481"/>
+    <limit effort="1" lower="0" upper="0.5410520681182421" velocity="2"/>
+    <mimic joint="right_thumb_proximal_pitch_joint" multiplier="0.8392" offset="0"/>
+  </joint>
+  <!-- thumb_force_sensor_2 -->
+  <link name="right_thumb_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="6.77003975447232E-05 -0.000236985202900622 -0.000558267741289802"/>
+      <mass value="0.000119024197892742"/>
+      <inertia ixx="1.02244976989544E-09" ixy="-6.74105007093921E-13" ixz="1.14255898493093E-12" iyy="9.97039736805973E-10" iyz="8.16377458719893E-12" izz="1.99065057325864E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_force_sensor_2_joint" type="fixed">
+    <origin rpy="-1.041 1.3851 -0.037357" xyz="-0.0080057 0.016443 0.0096921"/>
+    <parent link="right_thumb_intermediate"/>
+    <child link="right_thumb_force_sensor_2"/>
+  </joint>
+  <!-- thumb_distal -->
+  <link name="right_thumb_distal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0145444 0.0079048 0.0075893"/>
+      <mass value="0.007660"/>
+      <inertia ixx="9.459419e-07" ixy="1.685925e-07" ixz="9.762665e-09" iyy="5.002186e-07" iyz="2.972847e-08" izz="8.922258e-07"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_4.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_4.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_distal_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.01865 0.013373 -0.0022731"/>
+    <parent link="right_thumb_intermediate"/>
+    <child link="right_thumb_distal"/>
+    <axis xyz="0.17365 0 -0.98481"/>
+    <limit effort="1" lower="0" upper="0.45553093477052004" velocity="2"/>
+    <mimic joint="right_thumb_proximal_pitch_joint" multiplier="0.7477272" offset="0"/>
+  </joint>
+  <!-- thumb_force_sensor_3 -->
+  <link name="right_thumb_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-2.5107148976522E-07 -0.000696658150200258 -0.000425102019813703"/>
+      <mass value="0.000169893832350009"/>
+      <inertia ixx="3.91696226730881E-09" ixy="2.31955134193414E-14" ixz="-2.76639995099676E-13" iyy="1.41883536310886E-09" iyz="1.72950699351222E-10" izz="5.29525439677813E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_force_sensor_3_joint" type="fixed">
+    <origin rpy="-0.64083 1.3963 4.2914E-05" xyz="-0.0076345 0.020486 0.0088067"/>
+    <parent link="right_thumb_distal"/>
+    <child link="right_thumb_force_sensor_3"/>
+  </joint>
+  <!-- thumb_force_sensor_4 -->
+  <link name="right_thumb_force_sensor_4">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.51405730541843E-06 0.000421607186812417 -0.000751976299815514"/>
+      <mass value="1.66991205082657E-05"/>
+      <inertia ixx="2.25773453689085E-11" ixy="2.49446980591774E-15" ixz="5.29906678520533E-15" iyy="2.30774509490308E-11" iyz="-1.74397529562637E-13" izz="4.31637430427716E-11"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_4.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_4.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_force_sensor_4_joint" type="fixed">
+    <origin rpy="-1.7492 1.3963 0.0014317" xyz="-0.01883 0.027914 0.0068326"/>
+    <parent link="right_thumb_distal"/>
+    <child link="right_thumb_force_sensor_4"/>
+  </joint>
+  <!-- thumb_force_sensor_1 -->
+  <link name="right_thumb_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.000311386521466117 -9.39437134603871E-05 -0.000511449075416445"/>
+      <mass value="0.000234345870584151"/>
+      <inertia ixx="6.81918457897941E-09" ixy="-1.59551743941395E-10" ixz="1.7219245024005E-11" iyy="2.92367232191599E-09" iyz="1.8000053919482E-10" izz="9.68890809981099E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_thumb_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_thumb_force_sensor_1_joint" type="fixed">
+    <origin rpy="-0.99905 1.4338 0.13409" xyz="-0.023424 0.033251 0.007073"/>
+    <parent link="right_thumb_metacarpal"/>
+    <child link="right_thumb_force_sensor_1"/>
+  </joint>
+  <!-- index_proximal -->
+  <link name="right_index_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021993 0.0127440 0.0066515"/>
+      <mass value="0.018690"/>
+      <inertia ixx="3.117902e-06" ixy="-2.025636e-07" ixz="3.354656e-10" iyy="1.515271e-06" iyz="-2.066398e-10" izz="3.235549e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_index_proximal_joint" type="revolute">
+    <origin rpy="-1.6057 0 0" xyz="0.00056467 -0.038679 -0.1564"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_index_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="1"/>
+  </joint>
+  <!-- index_intermediate -->
+  <link name="right_index_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0005326 0.0253267 0.0060933"/>
+      <mass value="0.011020"/>
+      <inertia ixx="2.508237e-06" ixy="-4.493642e-07" ixz="-5.030267e-10" iyy="4.390647e-07" iyz="-3.263863e-09" izz="2.546092e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_index_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 0.00055"/>
+    <parent link="right_index_proximal"/>
+    <child link="right_index_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="1"/>
+    <mimic joint="right_index_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- index_force_sensor_2 -->
+  <link name="right_index_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="3.91105790090857E-06 0.000206428506730846 -0.000722888656592813"/>
+      <mass value="0.000255748458180208"/>
+      <inertia ixx="4.79878645065383E-09" ixy="-8.64076408119862E-11" ixz="-1.50330115198994E-12" iyy="2.43958893457375E-09" iyz="-3.05132448820246E-11" izz="7.12570334555721E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_index_force_sensor_2_joint" type="fixed">
+    <origin rpy="1.5708 1.5337 1.222" xyz="0.0081655 0.037446 0.0060795"/>
+    <parent link="right_index_intermediate"/>
+    <child link="right_index_force_sensor_2"/>
+  </joint>
+  <!-- index_force_sensor_3 -->
+  <link name="right_index_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-2.48722057788475E-05 -0.000345285689256153 -0.00133800038179009"/>
+      <mass value="6.79646984897729E-05"/>
+      <inertia ixx="1.31974821284448E-10" ixy="5.65060068039534E-12" ixz="7.79117122469888E-13" iyy="2.53430134807533E-10" iyz="9.12198063131294E-12" izz="2.8053351791299E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_index_force_sensor_3_joint" type="fixed">
+    <origin rpy="1.5708 1.5252 2.2692" xyz="0.0086237 0.052572 0.0060954"/>
+    <parent link="right_index_intermediate"/>
+    <child link="right_index_force_sensor_3"/>
+  </joint>
+  <!-- index_force_sensor_1 -->
+  <link name="right_index_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="4.50639917341789E-06 0.000116571661332499 -0.000567443126962344"/>
+      <mass value="0.00020277926206694"/>
+      <inertia ixx="3.38028798502951E-09" ixy="-5.04640338896753E-11" ixz="-2.15701714440208E-13" iyy="1.96412698995832E-09" iyz="-5.48195334354602E-12" izz="5.28079732652295E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_index_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_index_force_sensor_1_joint" type="fixed">
+    <origin rpy="1.5708 1.5351 1.7829" xyz="0.012046 0.019649 0.006651"/>
+    <parent link="right_index_proximal"/>
+    <child link="right_index_force_sensor_1"/>
+  </joint>
+  <!-- middle_proximal -->
+  <link name="right_middle_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021993 0.0127440 0.0066515"/>
+      <mass value="0.018660"/>
+      <inertia ixx="3.112897e-06" ixy="-2.022384e-07" ixz="3.349271e-10" iyy="1.512839e-06" iyz="-2.063082e-10" izz="3.230355e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_middle_proximal_joint" type="revolute">
+    <origin rpy="-1.5708 0 0" xyz="0.00056467 -0.0171 -0.157"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_middle_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="1"/>
+  </joint>
+  <!-- middle_intermediate -->
+  <link name="right_middle_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0000930 0.0270238 0.0061006"/>
+      <mass value="0.017670"/>
+      <inertia ixx="4.542372e-06" ixy="-7.963572e-07" ixz="1.335054e-11" iyy="7.189357e-07" iyz="8.024201e-11" izz="4.617542e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_middle_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 0.00055"/>
+    <parent link="right_middle_proximal"/>
+    <child link="right_middle_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="1"/>
+    <mimic joint="right_middle_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- middle_force_sensor_2 -->
+  <link name="right_middle_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-3.55652627983399E-07 2.88666331397097E-05 -0.000722235489778011"/>
+      <mass value="0.00026259331441686"/>
+      <inertia ixx="5.0422606271269E-09" ixy="3.96627458519253E-13" ixz="-3.26041478710841E-14" iyy="2.56807850635635E-09" iyz="3.5373620870123E-12" izz="7.49563436241948E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_middle_force_sensor_2_joint" type="fixed">
+    <origin rpy="0.37285 1.5708 0" xyz="0.0090859 0.040963 0.0061003"/>
+    <parent link="right_middle_intermediate"/>
+    <child link="right_middle_force_sensor_2"/>
+  </joint>
+  <!-- middle_force_sensor_3 -->
+  <link name="right_middle_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="6.04731043574169E-08 -0.00036544534557964 -0.00127683945630336"/>
+      <mass value="6.64914575467581E-05"/>
+      <inertia ixx="1.27227764572837E-10" ixy="1.00476590749342E-14" ixz="8.5788062829599E-15" iyy="2.43691164484047E-10" iyz="7.61272996067338E-12" izz="2.75875170563041E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_middle_force_sensor_3_joint" type="fixed">
+    <origin rpy="-0.67435 1.5708 0" xyz="0.0098294 0.056051 0.0061006"/>
+    <parent link="right_middle_intermediate"/>
+    <child link="right_middle_force_sensor_3"/>
+  </joint>
+  <!-- middle_force_sensor_1 -->
+  <link name="right_middle_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="3.42843697213185E-07 0.000116657509605197 -0.000567442695803486"/>
+      <mass value="0.000202779388301744"/>
+      <inertia ixx="3.38208410519618E-09" ixy="1.87569574369712E-13" ixz="-1.99647221364038E-14" iyy="1.96233204624223E-09" iyz="-5.48580562274486E-12" izz="5.2807983995112E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_middle_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_middle_force_sensor_1_joint" type="fixed">
+    <origin rpy="-0.21209 1.5708 0" xyz="0.012046 0.019649 0.006651"/>
+    <parent link="right_middle_proximal"/>
+    <child link="right_middle_force_sensor_1"/>
+  </joint>
+  <!-- ring_proximal -->
+  <link name="right_ring_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021993 0.0127440 0.0066515"/>
+      <mass value="0.018690"/>
+      <inertia ixx="3.117902e-06" ixy="-2.025636e-07" ixz="3.354656e-10" iyy="1.515271e-06" iyz="-2.066398e-10" izz="3.235549e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ring_proximal_joint" type="revolute">
+    <origin rpy="-1.5184 0 0" xyz="0.00056467 0.0045302 -0.15683"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_ring_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="1"/>
+  </joint>
+  <!-- ring_intermediate -->
+  <link name="right_ring_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0005326 0.0253267 0.0060933"/>
+      <mass value="0.011020"/>
+      <inertia ixx="2.508237e-06" ixy="-4.493642e-07" ixz="-5.030267e-10" iyy="4.390647e-07" iyz="-3.263863e-09" izz="2.546092e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ring_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 0.00055"/>
+    <parent link="right_ring_proximal"/>
+    <child link="right_ring_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="1"/>
+    <mimic joint="right_ring_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- ring_force_sensor_2 -->
+  <link name="right_ring_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.52436836102507E-05 0.000205901966578867 -0.000722888420899154"/>
+      <mass value="0.00025574845564278"/>
+      <inertia ixx="4.79446001367807E-09" ixy="1.32867587230573E-10" ixz="1.33199694981756E-12" iyy="2.44391505492957E-09" iyz="-3.05212434039715E-11" izz="7.12570290551657E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ring_force_sensor_2_joint" type="fixed">
+    <origin rpy="-1.5708 1.5151 -1.9196" xyz="0.0081655 0.037446 0.0060795"/>
+    <parent link="right_ring_intermediate"/>
+    <child link="right_ring_force_sensor_2"/>
+  </joint>
+  <!-- ring_force_sensor_3 -->
+  <link name="right_ring_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="1.45479882125935E-05 -0.000345868482895695 -0.00133799622032654"/>
+      <mass value="6.79650392240318E-05"/>
+      <inertia ixx="1.32268381568451E-10" ixy="-8.21005452975136E-12" ixz="-2.63862426644721E-13" iyy="2.53139744192141E-10" iyz="9.15106235580156E-12" izz="2.80536243626591E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ring_force_sensor_3_joint" type="fixed">
+    <origin rpy="-1.5708 1.5025 -0.87237" xyz="0.0086237 0.052572 0.0060954"/>
+    <parent link="right_ring_intermediate"/>
+    <child link="right_ring_force_sensor_3"/>
+  </joint>
+  <!-- ring_force_sensor_1 -->
+  <link name="right_ring_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-5.90327958141946E-06 0.000116509445804644 -0.000567443259521558"/>
+      <mass value="0.00020277922338036"/>
+      <inertia ixx="3.37799540185096E-09" ixy="7.60796091703614E-11" ixz="2.73854397842958E-13" iyy="1.96641957767428E-09" iyz="-5.47947431188337E-12" izz="5.28079735826682E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_ring_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_ring_force_sensor_1_joint" type="fixed">
+    <origin rpy="-1.5708 1.5172 -1.3587" xyz="0.012046 0.019649 0.006651"/>
+    <parent link="right_ring_proximal"/>
+    <child link="right_ring_force_sensor_1"/>
+  </joint>
+  <!-- pinky_proximal -->
+  <link name="right_pinky_proximal">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0.0021993 0.0127440 0.0066515"/>
+      <mass value="0.018690"/>
+      <inertia ixx="3.117902e-06" ixy="-2.025636e-07" ixz="3.354656e-10" iyy="1.515271e-06" iyz="-2.066398e-10" izz="3.235549e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_pinky_proximal_joint" type="revolute">
+    <origin rpy="-1.4661 0 0" xyz="0.00056467 0.025916 -0.15365"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_pinky_proximal"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.4381" velocity="1"/>
+  </joint>
+  <!-- pinky_intermediate -->
+  <link name="right_pinky_intermediate">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-0.0014307 0.0206246 0.0060999"/>
+      <mass value="0.011660"/>
+      <inertia ixx="1.862131e-06" ixy="-3.607337e-07" ixz="5.938615e-11" iyy="4.314876e-07" iyz="1.044019e-10" izz="1.868092e-06"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_pinky_intermediate_joint" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0034259 0.032596 0.00055"/>
+    <parent link="right_pinky_proximal"/>
+    <child link="right_pinky_intermediate"/>
+    <axis xyz="0 0 -1"/>
+    <limit effort="1" lower="0" upper="1.476374" velocity="1"/>
+    <mimic joint="right_pinky_proximal_joint" multiplier="1.0843" offset="0"/>
+  </joint>
+  <!-- pinky_force_sensor_2 -->
+  <link name="right_pinky_force_sensor_2">
+    <inertial>
+      <origin rpy="0 0 0" xyz="1.83850807690678E-05 -0.000118792499944682 -0.000773536639654265"/>
+      <mass value="0.000280265363825451"/>
+      <inertia ixx="5.36105565367507E-09" ixy="2.90871023858778E-10" ixz="-4.23704440233307E-12" iyy="2.78924633862049E-09" iyz="3.60734545957643E-11" izz="8.01055296833177E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_force_sensor_2.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_force_sensor_2.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_pinky_force_sensor_2_joint" type="fixed">
+    <origin rpy="-1.5708 1.4597 -1.9127" xyz="0.0064512 0.027683 0.0061172"/>
+    <parent link="right_pinky_intermediate"/>
+    <child link="right_pinky_force_sensor_2"/>
+  </joint>
+  <!-- pinky_force_sensor_3 -->
+  <link name="right_pinky_force_sensor_3">
+    <inertial>
+      <origin rpy="0 0 0" xyz="6.36863053955425E-05 -0.00043723677420851 -0.00112814037373135"/>
+      <mass value="6.10539921684107E-05"/>
+      <inertia ixx="1.11592356002466E-10" ixy="-1.48925479775259E-11" ixz="-1.18387481927138E-12" iyy="2.17209112811676E-10" iyz="8.07880135891959E-12" izz="2.52055535156649E-10"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_force_sensor_3.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_force_sensor_3.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_pinky_force_sensor_3_joint" type="fixed">
+    <origin rpy="-1.5708 1.4336 -0.86551" xyz="0.0063972 0.042707 0.0061154"/>
+    <parent link="right_pinky_intermediate"/>
+    <child link="right_pinky_force_sensor_3"/>
+  </joint>
+  <!-- pinky_force_sensor_1 -->
+  <link name="right_pinky_force_sensor_1">
+    <inertial>
+      <origin rpy="0 0 0" xyz="-1.21300809558696E-05 0.000116026903212899 -0.000567442994249934"/>
+      <mass value="0.000202779290224811"/>
+      <inertia ixx="3.3658199564233E-09" ixy="1.51080971417152E-10" ixz="5.66657100478414E-13" iyy="1.97859528185445E-09" iyz="-5.45672948532718E-12" izz="5.28079755559196E-09"/>
+    </inertial>
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_force_sensor_1.STL"/>
+      </geometry>
+      <material name="rh56e2_black">
+        <color rgba="0.1 0.1 0.1 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <geometry>
+        <mesh filename="package://g1_edu_inspire_rh56e2_description/meshes/hand_right/right_little_force_sensor_1.STL"/>
+      </geometry>
+    </collision>
+  </link>
+  <joint name="right_pinky_force_sensor_1_joint" type="fixed">
+    <origin rpy="-1.5708 1.4637 -1.3587" xyz="0.012046 0.019649 0.006651"/>
+    <parent link="right_pinky_proximal"/>
+    <child link="right_pinky_force_sensor_1"/>
+  </joint>
+  <!-- Three-finger grasp TCP -->
+  <link name="right_tcp">
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1e-06"/>
+      <inertia ixx="1e-09" ixy="0" ixz="0" iyy="1e-09" iyz="0" izz="1e-09"/>
+    </inertial>
+  </link>
+  <joint name="right_tcp_joint" type="fixed">
+    <!-- Measured tcp position relative to base frame -->
+    <origin rpy="3.14 -1.0 0" xyz="0.105 0.0 -0.155"/>
+    <parent link="right_hand_base_link"/>
+    <child link="right_tcp"/>
+  </joint>
+  <link name="right_tcp_three_fingers"/>
+  <joint name="right_tcp_three_fingers_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.025 0.0"/>
+    <parent link="right_tcp"/>
+    <child link="right_tcp_three_fingers"/>
+  </joint>
+  <link name="right_tcp_pinch"/>
+  <joint name="right_tcp_pinch_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.030 0.0"/>
+    <parent link="right_tcp"/>
+    <child link="right_tcp_pinch"/>
+  </joint>
+  <link name="right_tcp_full_hand"/>
+  <joint name="right_tcp_full_hand_joint" type="fixed">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+    <parent link="right_tcp"/>
+    <child link="right_tcp_full_hand"/>
+  </joint>
+</robot>
