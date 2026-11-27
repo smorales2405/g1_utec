@@ -263,8 +263,10 @@ equilibrio al mover los brazos caminando), las gafas, la cámara, las manos real
    la correspondencia de los dedos no será exacta.
 5. Que `L2 + B` del mando es el amortiguamiento en el .151, como en el manual de Unitree.
 6. `rt/lowstate` llega a ~1000 msg/s (no 500): no afecta, pero no se sabe por qué.
-7. Poner `robot.conf` (el de `scripts_robot/robots/g1_151.conf`) y los scripts nuevos en el robot: hasta entonces,
-   el .151 sigue con los de antes de `robot.conf`, que funcionan.
+7. Un teleop corto con los scripts de `robot.conf`. Se pusieron en el robot el 2026-11-27, con su `robot.conf` (el
+   de antes quedó en `~/utec/respaldo_teleoperacion_antes_robot_conf_20261127.tgz`). Sin mover el robot, se comprobó
+   que reconoce su MAC, que las dos manos contestan y se leen, y que `lanzar_teleop.py` no arranca sin `--ee`, con
+   `--input-mode=controller` ni sin `--motion`.
 
 ### G1 .152, con las manos de goma
 
