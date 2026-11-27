@@ -1,8 +1,8 @@
 # Gestos de las manos del G1 desde la laptop
 
 Interfaz gráfica (PyQt5) para hacer **gestos con las dos manos Inspire RH56E2 del G1 EDU-U6** desde la laptop, por la
-WiFi del robot. Los gestos son los de la interfaz de la RH56DFTP (`inspire_hand_interface/Interfaz`): **Abrir,
-Cerrar, Señalar, Pinza y Pulgar arriba**, en cada mano por separado o en las dos a la vez. Muestra en vivo el ángulo,
+WiFi del robot. Los gestos son los de la interfaz de la RH56DFTP (`inspire_hand_interface/Interfaz`) menos la Pinza:
+**Abrir, Cerrar, Señalar y Pulgar arriba**, en cada mano por separado o en las dos a la vez. Muestra en vivo el ángulo,
 la fuerza, el estado, el error y la temperatura de cada dedo, y deja cambiar la velocidad.
 
 Habla con las manos igual que el teleop (`../g1_teleoperation`): **Modbus TCP**, puerto 6000, los mismos registros y
@@ -67,8 +67,10 @@ pulgar y rotación del pulgar. Son los de `inspire_hand_interface/Interfaz` (`ge
 | Abrir | `1000 1000 1000 1000 1000 1000` |
 | Cerrar | `0 0 0 0 1000 1000` → `0 0 0 0 0 1000` (primero los dedos y después el pulgar, que queda por fuera) |
 | Señalar | `0 0 0 1000 0 500` |
-| Pinza | `1000 1000 1000 486 580 133` (calculada con los grados de la RH56DFTP) |
 | Pulgar arriba | `0 0 0 0 1000 1000` |
+
+La **Pinza** de la Interfaz (`1000 1000 1000 486 580 133`, calculada con los grados de la RH56DFTP) se quitó el
+2026-11-26.
 
 En los gestos de varios pasos, el paso siguiente sale como pronto a los 0,8 s, igual que en la Interfaz, y además
 **espera a que los dedos lleguen o se paren**. A velocidad baja, con solo 0,8 s el pulgar cerraría sobre unos dedos
@@ -108,10 +110,12 @@ siempre con el ángulo que medía al conectar, para no moverla (p. ej. si el pul
 |---|---|---|
 | 2026-11-26 | Manos falsas (`prueba_enlace.py`, `prueba_ventana.py`) | los 5 gestos en las dos manos; uno distinto en cada mano; un gesto nuevo cancela el anterior; Cerrar a velocidad 200 espera a los dedos; velocidad puesta y restaurada al desconectar, al cerrar y al aparecer el teleop; no conecta con el teleop corriendo; reconexión tras caerse una mano sin repetir órdenes viejas |
 | 2026-11-26 | **G1 real**, por WiFi (túnel a `unitree@192.168.0.151`), teleop parado | **los 5 gestos en las dos manos**, rotación del pulgar incluida: todos los dedos a ≤ 16 de la consigna. Velocidad 300 puesta y restaurada a 1000. La ventana conecta, comprueba el teleop por SSH cada 2 s y lee las manos con ciclos de 27–55 ms. El lanzador abre y cierra su túnel |
+| 2026-11-26 | Pinza quitada (manos falsas) | los 4 gestos en las dos manos; `prueba_ventana.py` OK |
 
 Medido en el G1:
 
-- **Pinza:** el índice y el pulgar se tocan. La derecha aprieta con **766 gf** en el índice y la izquierda con 82 gf.
+- **Pinza** (quitada después): el índice y el pulgar se tocaban. La derecha apretaba con **766 gf** en el índice y la
+  izquierda con 82 gf.
 - **La rotación del pulgar** queda ~15 por debajo de la consigna (1000 → 985, 500 → 485, 133 → 118).
 - **Orden de los bytes** de `STATUS`, `ERROR` y `TEMP`: el byte **bajo** es el del dedo par, como en `manos.py`.
   Al mover solo el índice, el que seguía en movimiento era el índice. El SDK de Inspire los toma al revés, y el
@@ -134,7 +138,7 @@ g1_hands/
 │   ├── main.py                la ventana (argumentos: --izq/--der HOST:PUERTO, --ssh-control, --robot)
 │   ├── manos/                 sin Qt
 │   │   ├── registros.py       direcciones Modbus, IP, nombres de los dedos, estados y errores
-│   │   ├── gestos.py          los 5 gestos
+│   │   ├── gestos.py          los 4 gestos
 │   │   ├── enlace.py          una mano: hilo con el Modbus, velocidad restaurada al soltar
 │   │   └── robot.py           ¿corre el teleop? (pgrep por el ControlMaster del túnel)
 │   └── ui/                    ventana.py, panel_mano.py, estilo.py (el de la Interfaz)

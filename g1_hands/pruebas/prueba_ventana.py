@@ -132,15 +132,17 @@ def correr(capturas):
     captura("2_cerrar_ambas")
 
     print("== un gesto distinto en cada mano")
+    QTest.mouseClick(w._botones_ambas[0], 1)          # desde abiertas: Pulgar arriba tiene que mover algo
+    esperar(lambda: leer("der", R.ANGLE_ACT) == [1000] * 6, 4)
     QTest.mouseClick(boton(izq, "Señalar"), 1)
-    QTest.mouseClick(boton(der, "Pinza"), 1)
+    QTest.mouseClick(boton(der, "Pulgar arriba"), 1)
     esperar(lambda: leer("izq", R.ANGLE_ACT) == [0, 0, 0, 1000, 0, 500]
-            and leer("der", R.ANGLE_ACT) == [1000, 1000, 1000, 486, 580, 133], 4)
+            and leer("der", R.ANGLE_ACT) == [0, 0, 0, 0, 1000, 1000], 4)
     comprobar("izq señala", leer("izq", R.ANGLE_ACT) == [0, 0, 0, 1000, 0, 500], str(leer("izq", R.ANGLE_ACT)))
-    comprobar("der pinza", leer("der", R.ANGLE_ACT) == [1000, 1000, 1000, 486, 580, 133],
+    comprobar("der pulgar arriba", leer("der", R.ANGLE_ACT) == [0, 0, 0, 0, 1000, 1000],
               str(leer("der", R.ANGLE_ACT)))
     QTest.qWait(300)
-    captura("3_senalar_pinza")
+    captura("3_senalar_pulgar")
 
     print("== Abrir justo despues de Cerrar cancela el segundo paso de Cerrar")
     QTest.mouseClick(boton(izq, "Cerrar"), 1)
@@ -151,6 +153,8 @@ def correr(capturas):
     comprobar("ANGLE_SET sigue en Abrir", v == [1000] * 6, str(v))
 
     print("== velocidad 200: Cerrar espera a los dedos antes de cerrar el pulgar")
+    QTest.mouseClick(boton(der, "Abrir"), 1)          # desde abierta, para que los dedos tarden en cerrar
+    esperar(lambda: leer("der", R.ANGLE_ACT) == [1000] * 6, 4)
     w._vel.setValue(200)
     esperar(lambda: leer("izq", R.SPEED_SET) == [200] * 6 and leer("der", R.SPEED_SET) == [200] * 6, 2)
     comprobar("SPEED_SET 200 en las dos", leer("izq", R.SPEED_SET) == [200] * 6 and leer("der", R.SPEED_SET) == [200] * 6)
