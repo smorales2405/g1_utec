@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 # Prueba lanzar_teleop.py en este PC, sin robot ni gafas: simulador (sim_g1_arm_sdk.py) + controlador real de
-# Unitree con los parches (prueba_teleop_g1.py), en tres casos: normal, sin pulsar r y con fallos en la salida.
+# Unitree con los parches (prueba_teleop_g1.py), en cuatro casos: normal, sin pulsar r y con fallos en la salida
+# con las RH56E2 (el G1 .151), y normal con las manos de goma (el G1 .152: solo brazos, robot.conf con MANOS=goma).
 #
-#   ./probar.sh                 los tres casos
-#   ./probar.sh normal|sin-r|falla-brazos
+#   ./probar.sh                 los cuatro casos
+#   ./probar.sh normal|sin-r|falla-brazos|goma
 #   VISOR=1 ./probar.sh normal  con el visor de MuJoCo
 #
 # Necesita:
@@ -31,16 +32,19 @@ trap 'kill $SIM 2>/dev/null || true; rm -rf "$TMP"' EXIT
 # Una carpeta como ~/utec/teleoperacion: los ficheros de este repo y una copia de teleop/ de xr_teleoperate
 P=$TMP/teleoperacion
 mkdir -p "$P/xr_teleoperate"
-ln -s "$TELEOP_SRC/lanzar_teleop.py" "$TELEOP_SRC/modelo_ik.py" "$TELEOP_SRC/modelo" "$P/"
+ln -s "$TELEOP_SRC/lanzar_teleop.py" "$TELEOP_SRC/modelo_ik.py" "$TELEOP_SRC/config_robot.py" "$TELEOP_SRC/modelo" "$P/"
 cp -a "$XR/teleop" "$P/xr_teleoperate/"
 rm -f "$P/xr_teleoperate/teleop/"*_model_cache.pkl
 ln -s "$XR/assets" "$P/xr_teleoperate/assets"
 TV_PATH="$SDK/unitree_sdk2_python:$SDK/inspire_hand_sdk:$CACHE/pydeps:${PYTHONPATH:-}"
 
 caso() {
-    local nombre=$1; shift
-    echo; echo "################ $nombre"
-    env -u PYTHONNOUSERSITE python3 "$AQUI/sim_g1_arm_sdk.py" --manos-cerradas --log "$TMP/$nombre.csv" \
+    # $1 = nombre, $2 = MANOS (rh56e2 | goma); el resto, para prueba_teleop_g1.py
+    local nombre=$1 manos=$2; shift 2
+    echo; echo "################ $nombre (MANOS=$manos)"
+    # El robot.conf del robot que se prueba, como el de scripts_robot/robots/
+    printf 'NOMBRE="simulador (MANOS=%s)"\nMANOS=%s\nIFACE=lo\nD435I=000000000000\n' "$manos" "$manos" > "$P/robot.conf"
+    env -u PYTHONNOUSERSITE python3 "$AQUI/sim_g1_arm_sdk.py" --manos "$manos" --manos-cerradas --log "$TMP/$nombre.csv" \
         ${VISOR:+--visor} > "$TMP/$nombre.sim.log" 2>&1 &
     SIM=$!
     sleep 3
@@ -56,10 +60,12 @@ caso() {
 
 RC=0
 case "${1:-todos}" in
-    normal)       caso normal || RC=1 ;;
-    sin-r)        caso sin-r --sin-r || RC=1 ;;
-    falla-brazos) caso falla-brazos --falla-brazos || RC=1 ;;
-    todos)        caso normal || RC=1; caso sin-r --sin-r || RC=1; caso falla-brazos --falla-brazos || RC=1 ;;
+    normal)       caso normal rh56e2 || RC=1 ;;
+    sin-r)        caso sin-r rh56e2 --sin-r || RC=1 ;;
+    falla-brazos) caso falla-brazos rh56e2 --falla-brazos || RC=1 ;;
+    goma)         caso goma goma --goma || RC=1 ;;
+    todos)        caso normal rh56e2 || RC=1; caso sin-r rh56e2 --sin-r || RC=1
+                  caso falla-brazos rh56e2 --falla-brazos || RC=1; caso goma goma --goma || RC=1 ;;
     *)            sed -n '2,8p' "$0"; exit 1 ;;
 esac
 echo; [ $RC = 0 ] && echo "TODO OK" || echo "HAY FALLOS"

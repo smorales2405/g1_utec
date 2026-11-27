@@ -8,7 +8,12 @@
    - MotionSwitcher.Enter_Debug_Mode() queda anulado: nunca se llama a ReleaseMode();
    - antes de crear el controlador de los brazos se pregunta el modo (CheckMode). Si responde '' (Debug:
      nadie escucha rt/arm_sdk y las piernas no se sostienen), no arranca. Se registra la FSM (GetFsmId).
-1. Modelo de la IK: el del G1 de UTEC, modo 15 con las RH56E2 (modelo_ik.py), y no el de Unitree.
+1. Modelo de la IK: el del G1 de UTEC, modo 15, con las manos de este robot (modelo_ik.py), y no el de Unitree.
+   Las manos las dice robot.conf (config_robot.py): MANOS=rh56e2, las Inspire, o MANOS=goma, las manos falsas.
+   - con rh56e2 hace falta --ee=inspire_ftp, y con goma no puede ir ningun --ee (solo los brazos);
+   - --input-mode tiene que ser hand: con --motion y controller, el teleop de Unitree le da la locomocion a los
+     mandos de las Quest (LocoClient.Move) y con los dos joysticks pulsados la pone en amortiguamiento (Damp): de
+     pie, el robot cae. Aqui la locomocion es del mando de Unitree.
 2. Entrada suave en arm_sdk. En el original, al crearse el controlador el peso de arm_sdk salta a 1 y los
    brazos van deprisa a 0 grados antes de pulsar r. Aqui:
    a) los brazos se quedan en la postura de la locomocion y el peso sube de 0 a 1 en RAMPA_PESO_S;
@@ -16,7 +21,7 @@
    En las dos, y en la salida, el par de los brazos es el de gravedad del modelo de UTEC en la postura mandada.
 3. Salida (q, Ctrl-C, un error o un corte del SSH), en este orden:
    a) los brazos van a 0 grados (antebrazos hacia delante);
-   b) se abren del todo las dos manos, con los brazos quietos en 0 grados;
+   b) se abren del todo las dos manos, con los brazos quietos en 0 grados (con MANOS=goma no hay nada que abrir);
    c) los brazos vuelven a la postura de la locomocion, la medida al arrancar;
    d) el peso de arm_sdk baja de 1 a 0 en RAMPA_PESO_S: los brazos vuelven a la locomocion.
    d) se hace SIEMPRE, aunque fallen los anteriores. El original solo baja el peso si los brazos llegan a menos
@@ -45,7 +50,7 @@ logging_mp.basicConfig = lambda *args, **kwargs: None
 import pinocchio as pin
 from teleop.utils import motion_switcher as ms
 from teleop.robot_control import robot_arm, robot_hand_inspire
-import modelo_ik
+import modelo_ik, config_robot
 
 RAMPA_PESO_S = 2.0    # s para subir (al arrancar) y bajar (al salir) el peso de arm_sdk entre 0 y 1
 RAMPA_INICIO_S = 2.0  # s, tras pulsar r, para pasar de la postura de la locomocion a la del operador
@@ -56,10 +61,13 @@ TOL_BRAZOS = 0.05     # rad; la misma que ctrl_dual_arm_go_home de Unitree
 ESPERA_BRAZOS_S = 1.0 # tras la rampa, si no han llegado en este tiempo se sigue igual
 SIN_PING_S = 3.0      # sin respuesta del PC durante esto -> q (la WiFi del H1-2 tenia picos de 0.5 s)
 
+CONF = config_robot.leer()
+MANOS_ROBOT = config_robot.manos(CONF)                    # 'rh56e2' o 'goma'; sin robot.conf no se sigue
+URDF = modelo_ik.URDFS[MANOS_ROBOT]
 Brazos = robot_arm.G1_29_ArmController
 JUNTAS_BRAZOS = [int(j) for j in robot_arm.G1_29_JointArmIndex]
 PESO = int(robot_arm.G1_29_JointIndex.kNotUsedJoint0)   # motor_cmd[29].q: el peso de arm_sdk
-_, MODELO = modelo_ik.construir()                          # el mismo que usa la IK, para el par de gravedad
+_, MODELO = modelo_ik.construir(URDF)                      # el mismo que usa la IK, para el par de gravedad
 _DATOS = MODELO.createData()
 _CEROS = np.zeros(MODELO.nv)
 _CERROJO_MODELO = threading.Lock()
@@ -357,12 +365,24 @@ def comprobar_argumentos(argv):
     p = argparse.ArgumentParser(add_help=False)
     p.add_argument("--arm", default="G1_29")
     p.add_argument("--motion", action="store_true")
+    p.add_argument("--ee", default=None)
+    p.add_argument("--input-mode", default="hand")
     a, _ = p.parse_known_args(argv)
     if a.arm != "G1_29":
         sys.exit(f"lanzar_teleop: este lanzador es solo para el G1 (--arm=G1_29), no para --arm={a.arm}")
     if not a.motion:
         sys.exit("lanzar_teleop: falta --motion. Sin el, el teleop de Unitree quita la locomocion (ReleaseMode) "
                  "y el G1 de pie se caeria. arrancar.sh ya lo pasa.")
+    if a.input_mode != "hand":
+        sys.exit(f"lanzar_teleop: --input-mode={a.input_mode} no: con --motion, el teleop de Unitree le daria la "
+                 "locomocion a los mandos de las Quest, y los dos joysticks pulsados la ponen en amortiguamiento "
+                 "(el robot cae). Solo --input-mode=hand, y la locomocion con el mando de Unitree.")
+    if MANOS_ROBOT == "rh56e2" and a.ee != "inspire_ftp":
+        sys.exit(f"lanzar_teleop: robot.conf dice MANOS=rh56e2 y hace falta --ee=inspire_ftp, no --ee={a.ee}. "
+                 "arrancar.sh ya lo pasa.")
+    if MANOS_ROBOT == "goma" and a.ee is not None:
+        sys.exit(f"lanzar_teleop: robot.conf dice MANOS=goma (las manos falsas): sin --ee, no --ee={a.ee}. "
+                 "arrancar.sh no lo pasa.")
 
 
 if __name__ == "__main__":
@@ -373,7 +393,7 @@ if __name__ == "__main__":
     # hereda el cerrojo de importacion tomado por otro hilo y se bloquea al importar PngImagePlugin en el
     # primer JPEG que manda a las gafas (visto con py-spy el 2026-09-25 en el H1-2).
     from PIL import Image as _PIL_Image; _PIL_Image.init()
-    aviso("modelo de la IK: " + modelo_ik.escribir_cache(TELEOP))
+    aviso(f"{CONF.get('NOMBRE', '?')}, MANOS={MANOS_ROBOT}. Modelo de la IK: {modelo_ik.escribir_cache(TELEOP, URDF)}")
     aplicar_parches()
     threading.Thread(target=vigilar_conexion, name="vigilar_conexion", daemon=True).start()
     sys.argv = ["teleop_hand_and_arm.py"] + sys.argv[1:]

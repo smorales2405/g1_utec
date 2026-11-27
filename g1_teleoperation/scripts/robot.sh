@@ -6,9 +6,11 @@
 #   ./robot.sh gafas         URL para las Meta Quest 3 del teleop XR
 #
 # Los demas lanzadores (./teleop_xr.sh, ./estado.sh, ./manos.sh) ya se reenvian solos al robot: ver comun.sh.
+# Por defecto, el G1 .151 (manos RH56E2); el .152 (manos de goma) con  G1=152 ./robot.sh comprobar
 # Otra direccion:  ROBOT_SSH=unitree@<IP> ./robot.sh. Si el SSH va por el cable, la IP de las gafas (la de la
 # WiFi del robot) se da aparte:  IP_GAFAS=<IP WiFi> ./robot.sh gafas
-ROBOT_SSH=${ROBOT_SSH:-unitree@192.168.0.151}       # la misma que en comun.sh
+G1=${G1:-151}                                        # como en comun.sh
+ROBOT_SSH=${ROBOT_SSH:-unitree@192.168.0.$G1}
 IP=${ROBOT_SSH#*@}
 IP_GAFAS=${IP_GAFAS:-$IP}
 AQUI="$(cd "$(dirname "$0")" && pwd)"
@@ -29,7 +31,7 @@ case "${1:-}" in
     gafas)
         echo "En las Quest 3 (la misma WiFi que el robot):  https://$IP_GAFAS:8012/?ws=wss://$IP_GAFAS:8012"
         [ "$IP_GAFAS" = 192.168.123.164 ] && echo "  OJO: esa es la IP del cable interno; las gafas necesitan la de la WiFi del robot (IP_GAFAS=...)"
-        echo "Antes, en este PC:  ./teleop_xr.sh   (G1 de pie en Regular con R1+Y; r empieza, q sale)" ;;
+        echo "Antes, en este PC:  $([ "$G1" = 151 ] || echo "G1=$G1 ")./teleop_xr.sh   (G1 de pie en Regular con R1+Y; r empieza, q sale)" ;;
     *)
-        sed -n '2,10p' "$0"; exit 1 ;;
+        sed -n '2,11p' "$0"; exit 1 ;;
 esac

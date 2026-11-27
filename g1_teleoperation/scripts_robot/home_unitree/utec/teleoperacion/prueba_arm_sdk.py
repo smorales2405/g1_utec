@@ -28,7 +28,7 @@ NOMBRES = ["cint_yaw", "cint_roll", "cint_pitch"] + [f"{l}{j}" for l in ("I", "D
 
 def main():
     segundos = float(sys.argv[1]) if len(sys.argv) > 1 else 5.0
-    iface = sys.argv[2] if len(sys.argv) > 2 else "eth1"
+    iface = sys.argv[2] if len(sys.argv) > 2 else lt.CONF.get("IFACE", "eth1")   # la de robot.conf
     ChannelFactoryInitialize(int(os.environ.get("DDS_DOMINIO", "0")), iface)   # 1 = simulador
     lt.aplicar_parches()
     brazos = lt.Brazos(motion_mode=True, simulation_mode=False)

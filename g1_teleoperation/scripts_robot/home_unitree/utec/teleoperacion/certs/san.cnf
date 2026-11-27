@@ -1,5 +1,6 @@
 # Certificado HTTPS para las Quest 3 (televuer lo lee de ~/.config/xr_teleoperate/). IP.2 es la del G1 en la WiFi
-# (la de las gafas): scripts_robot/README.md, paso 7.
+# (la de las gafas): 192.168.0.151 en el G1 de las RH56E2 y 192.168.0.152 en el de las manos de goma. En cada robot
+# se cambia antes de generar el certificado: scripts_robot/README.md, paso 7.
 [req]
 distinguished_name=dn
 x509_extensions=v3

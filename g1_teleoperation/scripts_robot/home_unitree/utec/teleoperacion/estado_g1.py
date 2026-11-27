@@ -1,17 +1,21 @@
 #!/usr/bin/env python3
 """SOLO LECTURA: estado del G1 para la teleoperacion. No publica nada en DDS ni escribe en las manos.
 
-    estado_g1.py [IFACE] [SEGUNDOS]      todo (por defecto eth1, la red interna de este G1, y 3 s)
+    estado_g1.py [IFACE] [SEGUNDOS]      todo (por defecto la IFACE de robot.conf, o eth1, y 3 s)
     estado_g1.py [IFACE] --arm-sdk       solo si alguien publica en rt/arm_sdk; sale con 1 si hay alguien
+    estado_g1.py --manos                 solo si las dos manos contestan en el puerto 6000; sale con 1 si no
 
   - rt/lowstate: si llega, frecuencia, mode_machine (el robot de UTEC es el 15), cintura y brazos, IMU.
   - rt/arm_sdk: si alguien publica (otro teleop, desde el robot o desde otro PC de la red) y con que peso.
   - CheckMode: '' es Debug (arm_sdk no hace nada y las piernas no se sostienen); otro nombre, la locomocion.
   - GetFsmId de la locomocion. En Debug no contesta.
-  - Manos: si responden al ping y al puerto Modbus TCP 6000 (192.168.123.210 y .211).
+  - robot.conf (config_robot.py): que robot es y que manos tiene.
+  - Manos, si robot.conf dice MANOS=rh56e2: si responden al ping y al puerto Modbus TCP 6000 (192.168.123.210 y
+    .211). Con MANOS=goma no hay nada que comprobar.
 """
 import os, socket, subprocess, sys, threading, time
 import numpy as np
+import config_robot
 
 MANOS = {"izq": "192.168.123.210", "der": "192.168.123.211"}   # las mismas que inspire_ftp_dual_driver.py
 NOMBRES = (["cintura_yaw", "cintura_roll", "cintura_pitch"]
@@ -50,9 +54,28 @@ def arm_sdk(segundos=1.0):
     return True
 
 
+def manos():
+    # True si las dos contestan en el puerto Modbus TCP 6000
+    todas = True
+    for lado, ip in MANOS.items():
+        ping = subprocess.run(["ping", "-c", "1", "-W", "1", "-q", ip], stdout=subprocess.DEVNULL,
+                              stderr=subprocess.DEVNULL).returncode == 0
+        try:
+            socket.create_connection((ip, 6000), timeout=1).close()
+            modbus = True
+        except OSError:
+            modbus = False
+        todas = todas and modbus
+        print(f"mano {lado} {ip}: ping {'si' if ping else 'NO'}, Modbus TCP :6000 {'si' if modbus else 'NO'}")
+    return todas
+
+
 def main():
+    if "--manos" in sys.argv:
+        sys.exit(0 if manos() else 1)
+    conf = config_robot.leer()
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    iface = args[0] if args else "eth1"
+    iface = args[0] if args else conf.get("IFACE", "eth1")
     segundos = float(args[1]) if len(args) > 1 else 3.0
     from unitree_sdk2py.core.channel import ChannelFactoryInitialize
     ChannelFactoryInitialize(int(os.environ.get("DDS_DOMINIO", "0")), iface)   # 1 = simulador
@@ -61,6 +84,11 @@ def main():
         sys.stdout.flush()
         os._exit(1 if hay else 0)
 
+    mac = {None: "sin MAC_WIFI", True: "MAC_WIFI la de este robot",
+           False: "MAC_WIFI de OTRO robot: el teleop no arranca"}[config_robot.mac_coincide(conf)]
+    print(f"robot.conf: {conf.get('NOMBRE', '?')}, MANOS={conf.get('MANOS', '?')}, IFACE={conf.get('IFACE', '?')}, "
+          f"D435I={conf.get('D435I', '?')}, {mac}" if conf
+          else f"robot.conf: NO EXISTE ({config_robot.RUTA}); el teleop no arranca")
     from unitree_sdk2py.idl.unitree_hg.msg.dds_ import LowState_
     msg, n = escuchar("rt/lowstate", LowState_, segundos)
     if not n:
@@ -96,15 +124,10 @@ def main():
     except Exception as e:
         print(f"FSM de la locomocion: no se pudo leer ({type(e).__name__}: {e})")
 
-    for lado, ip in MANOS.items():
-        ping = subprocess.run(["ping", "-c", "1", "-W", "1", "-q", ip], stdout=subprocess.DEVNULL,
-                              stderr=subprocess.DEVNULL).returncode == 0
-        try:
-            socket.create_connection((ip, 6000), timeout=1).close()
-            modbus = True
-        except OSError:
-            modbus = False
-        print(f"mano {lado} {ip}: ping {'si' if ping else 'NO'}, Modbus TCP :6000 {'si' if modbus else 'NO'}")
+    if conf.get("MANOS") == "goma":
+        print("manos: de goma (robot.conf), no se comprueban")
+    else:
+        manos()
     sys.stdout.flush()
     os._exit(0)   # sin esperar a que cyclonedds cierre sus hilos
 

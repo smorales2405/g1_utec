@@ -3,13 +3,14 @@
 de Unitree (xr_teleoperate 817fb00) con los parches de lanzar_teleop, sin gafas: la IK recibe las munecas de una
 postura conocida. La lanza probar.sh, que tambien arranca el simulador.
 
-    prueba_teleop_g1.py <carpeta como ~/utec/teleoperacion> [--sin-r] [--falla-brazos]
+    prueba_teleop_g1.py <carpeta como ~/utec/teleoperacion> [--sin-r] [--falla-brazos] [--goma]
         --sin-r         sale sin haber empezado a seguir (q sin pulsar r)
         --falla-brazos  los movimientos de la salida fallan: el peso tiene que bajar igual
+        --goma          el G1 .152, con las manos de goma: robot.conf con MANOS=goma y sin control de manos
     prueba_teleop_g1.py analizar <log del simulador> [--sin-r]
 
 Las manos falsas reciben "cerrada" hasta que lanzar_teleop pide abrirlas (como si el operador tuviera los puños
-cerrados al pulsar q). Imprime OK/FALLO por cada comprobacion y sale con 1 si alguna falla.
+cerrados al pulsar q). La carpeta tiene que tener un robot.conf con el MANOS de la prueba (lo escribe probar.sh). Imprime OK/FALLO por cada comprobacion y sale con 1 si alguna falla.
 """
 import os, sys, time
 import numpy as np
@@ -54,16 +55,35 @@ def analizar(ruta, sin_r):
 
 def main():
     carpeta = os.path.abspath(sys.argv[1])
-    sin_r, falla_brazos = "--sin-r" in sys.argv, "--falla-brazos" in sys.argv
+    sin_r, falla_brazos, goma = "--sin-r" in sys.argv, "--falla-brazos" in sys.argv, "--goma" in sys.argv
     sys.path.insert(0, carpeta)
     import lanzar_teleop as lt                     # cambia el directorio a xr_teleoperate/teleop
+
+    print("== robot.conf y argumentos")
+    manos = "goma" if goma else "rh56e2"
+    comprobar(f"robot.conf: MANOS={manos}", lt.MANOS_ROBOT == manos, f"{lt.MANOS_ROBOT}, {lt.CONF.get('NOMBRE')}")
+    comprobar("el modelo de la IK es el de esas manos", lt.URDF == lt.modelo_ik.URDFS[manos], os.path.basename(lt.URDF))
+
+    def acepta(*args):
+        try:
+            lt.comprobar_argumentos(["--arm=G1_29", "--motion", "--input-mode=hand", *args])
+            return True
+        except SystemExit:
+            return False
+    comprobar("acepta los argumentos de arrancar.sh", acepta(*([] if goma else ["--ee=inspire_ftp"])))
+    if goma:
+        comprobar("rechaza --ee=inspire_ftp", not acepta("--ee=inspire_ftp"))
+    else:
+        comprobar("rechaza ir sin --ee", not acepta())
+    comprobar("rechaza --input-mode=controller", not acepta(*([] if goma else ["--ee=inspire_ftp"]),
+                                                             "--input-mode=controller"))
     from multiprocessing import Array, Lock, Value
     from unitree_sdk2py.core.channel import ChannelFactoryInitialize
     import pinocchio as pin
     from teleop.robot_control import robot_arm_ik
 
     print("== modelo de la IK")
-    print("  " + lt.modelo_ik.escribir_cache(lt.TELEOP))
+    print("  " + lt.modelo_ik.escribir_cache(lt.TELEOP, lt.URDF))   # como lanzar_teleop: el de robot.conf
     enviar = lt._enviar_mano
     lt._enviar_mano = lambda self, izq, der: enviar(self, *((izq, der) if lt.ABRIR_MANOS.value else ([0] * 6, [0] * 6)))
     if falla_brazos:
@@ -74,26 +94,29 @@ def main():
     ChannelFactoryInitialize(1, "lo")
 
     ik = robot_arm_ik.G1_29_ArmIK()
-    _, propio = lt.modelo_ik.construir()
+    _, propio = lt.modelo_ik.construir(lt.URDF)
     comprobar("la IK usa el modelo de UTEC", ik.reduced_robot.model.nq == 14 and np.isclose(
         sum(i.mass for i in ik.reduced_robot.model.inertias), sum(i.mass for i in propio.inertias)),
         f"{sum(i.mass for i in ik.reduced_robot.model.inertias):.3f} kg en el modelo")
 
-    print("== controlador de brazos (motion_mode) y manos")
+    print("== controlador de brazos (motion_mode)" + ("" if goma else " y manos"))
     t0 = time.monotonic()
     brazos = lt.Brazos(motion_mode=True, simulation_mode=False)
     q_inicio = brazos.get_current_dual_arm_q()
-    listo = Value("b", False, lock=True)
-    izq, der = Array("d", 75, lock=True), Array("d", 75, lock=True)
-    estado_manos, accion_manos = Array("d", 12, lock=False), Array("d", 12, lock=False)
-    lt.robot_hand_inspire.Inspire_Controller_FTP(izq, der, Lock(), estado_manos, accion_manos,
-                                                 simulation_mode=False, xr_motion_data_ready_in=listo)
-    mano = lt.MANOS[0]
+    mano = None
+    if not goma:    # como el teleop de Unitree: sin --ee no crea el control de las manos
+        listo = Value("b", False, lock=True)
+        izq, der = Array("d", 75, lock=True), Array("d", 75, lock=True)
+        estado_manos, accion_manos = Array("d", 12, lock=False), Array("d", 12, lock=False)
+        lt.robot_hand_inspire.Inspire_Controller_FTP(izq, der, Lock(), estado_manos, accion_manos,
+                                                     simulation_mode=False, xr_motion_data_ready_in=listo)
+        mano = lt.MANOS[0]
     time.sleep(lt.RAMPA_PESO_S + 0.5)
     mov = np.abs(brazos.get_current_dual_arm_q() - q_inicio).max()
     comprobar("tras subir el peso, los brazos siguen en la postura de la locomocion", mov < 0.1, f"{mov:.3f} rad")
-    cerradas = max(list(mano.left_hand_state_array[:]) + list(mano.right_hand_state_array[:]))
-    comprobar("las manos falsas estan cerradas", cerradas < 0.1, f"max {cerradas:.2f}")
+    if mano is not None:
+        cerradas = max(list(mano.left_hand_state_array[:]) + list(mano.right_hand_state_array[:]))
+        comprobar("las manos falsas estan cerradas", cerradas < 0.1, f"max {cerradas:.2f}")
 
     if not sin_r:
         print("== teleop: la IK lleva las munecas a una postura conocida")
@@ -117,8 +140,12 @@ def main():
     t_q = time.monotonic()
     brazos.ctrl_dual_arm_go_home()
     duracion = time.monotonic() - t_q
-    abiertas = min(list(mano.left_hand_state_array[:]) + list(mano.right_hand_state_array[:]))
-    comprobar("manos abiertas al terminar", abiertas >= lt.MANO_ABIERTA, f"min {abiertas:.2f}")
+    if mano is not None:
+        abiertas = min(list(mano.left_hand_state_array[:]) + list(mano.right_hand_state_array[:]))
+        comprobar("manos abiertas al terminar", abiertas >= lt.MANO_ABIERTA, f"min {abiertas:.2f}")
+    else:
+        comprobar("sin manos, la salida no espera a abrirlas", not lt.MANOS and duracion < 3 * lt.RAMPA_PESO_S + 2,
+                  f"{duracion:.1f} s")
     comprobar("peso de arm_sdk en 0", brazos._peso.valor() == 0.0, f"{brazos._peso.valor():.3f}")
     if not falla_brazos:
         err = np.abs(brazos.get_current_dual_arm_q() - q_inicio).max()

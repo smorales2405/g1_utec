@@ -4,18 +4,18 @@
 Sirve para probar en este PC lo que hace lanzar_teleop.py con los brazos y las manos (entrada, teleop, salida),
 sin el robot. No es el control de Unitree: este solo imita lo que se sabe de arm_sdk.
 
-  - Modelo: el URDF del robot (modo 15 con las RH56E2, masas de la balanza), con la pelvis fija al mundo y sin
-    contactos. Armadura de 0.01 kg m2 en cada junta (como el MJCF de Unitree) y 0.001 en los dedos.
+  - Modelo: el URDF del robot (modo 15 con las RH56E2, o con las manos de goma con --manos goma; masas de la
+    balanza), con la pelvis fija al mundo y sin contactos. Armadura de 0.01 kg m2 en cada junta (como el MJCF de Unitree) y 0.001 en los dedos.
   - "Locomocion": piernas, cintura y brazos con PD a una postura fija, POSTURA_LOCO (inventada, no la de Unitree).
   - rt/arm_sdk (unitree_hg LowCmd_): en cintura y brazos (motores 12..28) manda la mezcla
         q = w q_sdk + (1 - w) q_loco    kp y kd igual    tau = w tau_sdk
     con w = motor_cmd[29].q recortado a [0, 1]. Si deja de llegar, se queda con el ultimo mensaje (lo que haga el
     robot de verdad en ese caso no se sabe: hay que probarlo colgado).
   - Publica rt/lowstate (unitree_hg LowState_, mode_machine 15) a 500 Hz.
-  - Manos: escucha rt/inspire_hand/ctrl/{l,r} y publica rt/inspire_hand/state/{l,r}; cada dedo va hacia su
-    angle_set a VEL_DEDOS unidades/s (1000 = abierto). En el visor se mueven los dedos del modelo.
+  - Manos (solo con las RH56E2): escucha rt/inspire_hand/ctrl/{l,r} y publica rt/inspire_hand/state/{l,r}; cada
+    dedo va hacia su angle_set a VEL_DEDOS unidades/s (1000 = abierto). En el visor se mueven los dedos del modelo.
 
-    python3 sim_g1_arm_sdk.py [--visor] [--log sim.csv] [--manos-cerradas] [--segundos N]
+    python3 sim_g1_arm_sdk.py [--manos rh56e2|goma] [--visor] [--log sim.csv] [--manos-cerradas] [--segundos N]
 
 Usa el python3 del sistema (mujoco + unitree_sdk2py), en el dominio DDS 1 por lo (como unitree_mujoco).
 """
@@ -27,7 +27,8 @@ import mujoco
 AQUI = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.dirname(os.path.dirname(AQUI))
 PAQUETE = os.path.join(REPO, "ros2_g1_ws", "src", "g1_edu_inspire_rh56e2_description")
-URDF = os.path.join(PAQUETE, "urdf", "g1_29dof_with_RH56E2_hands.urdf")
+URDFS = {"rh56e2": os.path.join(PAQUETE, "urdf", "g1_29dof_with_RH56E2_hands.urdf"),   # como MANOS de robot.conf
+         "goma": os.path.join(PAQUETE, "urdf", "g1_29dof_with_fake_hands.urdf")}
 SDK_MANOS = os.path.join(os.path.dirname(AQUI), "scripts_robot", "home_unitree", "pc2_offline", "src",
                          "inspire_hand_sdk", "inspire_sdkpy")
 
@@ -51,14 +52,14 @@ DEDOS = ["pinky_proximal", "ring_proximal", "middle_proximal", "index_proximal",
          "thumb_proximal_pitch", "thumb_proximal_yaw"]
 
 
-def modelo_mujoco():
+def modelo_mujoco(urdf):
     """El URDF con las mallas en una sola carpeta (sus nombres no se repiten) y la etiqueta <mujoco> de MuJoCo."""
     tmp = tempfile.mkdtemp(prefix="g1_mujoco_")
     for sub in ("g1", "hand_left", "hand_right"):
         d = os.path.join(PAQUETE, "meshes", sub)
         for n in os.listdir(d):
             os.symlink(os.path.join(d, n), os.path.join(tmp, n))
-    texto = re.sub(r'package://g1_edu_inspire_rh56e2_description/meshes/[^/"]+/', "", open(URDF).read())
+    texto = re.sub(r'package://g1_edu_inspire_rh56e2_description/meshes/[^/"]+/', "", open(urdf).read())
     texto = texto.replace("</robot>", '<mujoco><compiler meshdir="." balanceinertia="true" '
                                       'discardvisual="false" fusestatic="false"/></mujoco></robot>', 1)
     ruta = os.path.join(tmp, "g1.urdf")
@@ -70,7 +71,7 @@ def modelo_mujoco():
     m.dof_damping[:] = 0.05
     # mimic de los dedos: junta -> (junta madre, multiplicador)
     mimic = {}
-    for j in ET.parse(URDF).getroot().findall("joint"):
+    for j in ET.parse(urdf).getroot().findall("joint"):
         mi = j.find("mimic")
         if mi is not None:
             mimic[j.get("name")] = (mi.get("joint"), float(mi.get("multiplier", 1)), float(mi.get("offset", 0)))
@@ -115,6 +116,8 @@ class Manos:
 
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument("--manos", choices=sorted(URDFS), default="rh56e2",
+                    help="rh56e2 (con manos falsas por DDS) o goma (el G1 .152: sin manos que mandar)")
     ap.add_argument("--visor", action="store_true", help="abrir el visor de MuJoCo")
     ap.add_argument("--log", help="CSV a 100 Hz: t, peso, q y q_des de los 14 brazos, angulos de las manos")
     ap.add_argument("--manos-cerradas", action="store_true", help="las manos falsas empiezan cerradas")
@@ -127,7 +130,8 @@ def main():
     sys.path.insert(0, SDK_MANOS)   # solo los tipos DDS de las manos, sin el resto de inspire_sdkpy
     import inspire_dds
 
-    m, mimic, dedos = modelo_mujoco()
+    m, mimic, dedos = modelo_mujoco(URDFS[a.manos])
+    con_manos = a.manos == "rh56e2"
     d = mujoco.MjData(m)
     qadr = np.array([m.joint(n).qposadr[0] for n in MOTORES])
     vadr = np.array([m.joint(n).dofadr[0] for n in MOTORES])
@@ -141,12 +145,13 @@ def main():
     arm_sdk, manos = ArmSdk(), Manos(a.manos_cerradas)
     sub = ChannelSubscriber("rt/arm_sdk", LowCmd_); sub.Init(arm_sdk.recibir, 10)
     subs_manos = []
-    for l in "lr":
+    for l in ("lr" if con_manos else ""):
         s = ChannelSubscriber(f"rt/inspire_hand/ctrl/{l}", inspire_dds.inspire_hand_ctrl)
         s.Init(lambda msg, l=l: manos.recibir(l, msg), 10)
         subs_manos.append(s)
     pub = ChannelPublisher("rt/lowstate", LowState_); pub.Init()
-    pubs_manos = {l: ChannelPublisher(f"rt/inspire_hand/state/{l}", inspire_dds.inspire_hand_state) for l in "lr"}
+    pubs_manos = {l: ChannelPublisher(f"rt/inspire_hand/state/{l}", inspire_dds.inspire_hand_state)
+                  for l in ("lr" if con_manos else "")}
     for p in pubs_manos.values():
         p.Init()
     estado = unitree_hg_msg_dds__LowState_()
@@ -162,7 +167,8 @@ def main():
         from mujoco import viewer as visor_mujoco
         visor = visor_mujoco.launch_passive(m, d)
     print(f"sim G1 UTEC: {m.nq} juntas, {m.body_subtreemass[0]:.2f} kg. rt/arm_sdk -> cintura y brazos; "
-          f"rt/lowstate a 500 Hz; manos {'cerradas' if a.manos_cerradas else 'abiertas'}", flush=True)
+          f"rt/lowstate a 500 Hz; " + (f"manos {'cerradas' if a.manos_cerradas else 'abiertas'}" if con_manos
+                                        else "manos de goma (sin DDS de manos)"), flush=True)
 
     # Lanzado en segundo plano desde bash, SIGINT llega ignorado: se termina con SIGTERM (o Ctrl-C en primer plano)
     def terminar(*_):
@@ -210,7 +216,7 @@ def main():
                 estado.tick = paso
                 pub.Write(estado)
             if paso % 10 == 0:
-                for l in "lr":
+                for l in pubs_manos:
                     s = inspire_dds.inspire_hand_state(
                         pos_act=[0] * 6, angle_act=[int(x) for x in ang[l]], force_act=[0] * 6,
                         current=[0] * 6, err=[0] * 6, status=[0] * 6, temperature=[30] * 6)

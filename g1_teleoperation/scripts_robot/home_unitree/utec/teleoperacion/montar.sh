@@ -16,3 +16,4 @@ if [ ! -x ~/miniforge3/bin/conda ]; then
 fi
 bash ~/utec/teleoperacion/instalar.sh
 echo "### MONTAJE TERMINADO"
+[ -f ~/utec/teleoperacion/robot.conf ] || echo "### FALTA ~/utec/teleoperacion/robot.conf: el de este robot, de g1_teleoperation/scripts_robot/robots/ (scripts_robot/README.md, §5)"
